@@ -110,7 +110,7 @@
                     </div>
                     <div class="card-body sp-collapse-body" id="identityBody">
                         <div class="row g-3">
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <label class="form-label">
                                     Model Name
                                     <span class="hint">e.g. BC847B</span>
@@ -121,7 +121,7 @@
                                            title="Give your model a unique name – this will be used in the .model statement." />
                                 </div>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <label class="form-label">
                                     Type
                                     <span class="hint">polarity</span>
@@ -133,6 +133,20 @@
                                         <option value="PNP">PNP</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label">
+                                    Manufacturer
+                                    <span class="hint">brand</span>
+                                </label>
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-building"></i>
+                                    <select class="form-select" id="modelManufacturer" title="Choose the manufacturer.">
+                                        <option value="">— Generic —</option>
+                                        <option value="OTHER">Other (Custom)</option>
+                                    </select>
+                                </div>
+                                <input type="text" class="form-control mt-2" id="customManufacturer" placeholder="Custom Brand" style="display: none;" title="Enter custom manufacturer" />
                             </div>
                         </div>
                     </div>

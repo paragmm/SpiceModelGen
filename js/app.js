@@ -40,6 +40,15 @@ $(function () {
         SpiceUI.initThemeToggle();
         SpiceUI.initTooltips();
         
+        fetch('data/manufacturers.json')
+            .then(res => res.json())
+            .then(data => {
+                var $select = $('#modelManufacturer');
+                data.forEach(function(mfg) {
+                    $select.find('option[value="OTHER"]').before($('<option></option>').val(mfg).text(mfg));
+                });
+            }).catch(e => console.error('Failed to load manufacturers', e));
+
         SpiceLibrary.syncFromBackend().then(function() {
             populatePresetDropdown();
             refreshLibraryDropdown();
@@ -75,6 +84,7 @@ $(function () {
 
         $modelName.val(p.name);
         $modelType.val(p.type);
+        setManufacturer(p.manufacturer);
 
         // Set datasheet fields
         if (p.ds) {
@@ -128,6 +138,7 @@ $(function () {
 
         $modelName.val(model.name);
         $modelType.val(model.type);
+        setManufacturer(model.manufacturer);
 
         // Set datasheet fields
         if (model.datasheet) {
@@ -197,6 +208,30 @@ $(function () {
         return sp;
     }
 
+    function getManufacturer() {
+        var mfg = $('#modelManufacturer').val();
+        if (mfg === 'OTHER') {
+            return $('#customManufacturer').val().trim();
+        }
+        return mfg;
+    }
+
+    function setManufacturer(mfg) {
+        if (!mfg) {
+            $('#modelManufacturer').val('');
+            $('#customManufacturer').hide().val('');
+            return;
+        }
+        var $opts = $('#modelManufacturer option').map(function() { return $(this).val(); }).get();
+        if ($opts.indexOf(mfg) !== -1) {
+            $('#modelManufacturer').val(mfg);
+            $('#customManufacturer').hide().val('');
+        } else {
+            $('#modelManufacturer').val('OTHER');
+            $('#customManufacturer').show().val(mfg);
+        }
+    }
+
     function generateModel() {
         var name = $modelName.val().trim() || 'MY_NPN';
         var type = $modelType.val() || 'NPN';
@@ -207,6 +242,7 @@ $(function () {
         var result = SpiceEngine.generateModel({
             name: name,
             type: type,
+            manufacturer: getManufacturer(),
             spice: getSpiceValues(),
             custom: customParams,
             datasheet: getDatasheetValues()
@@ -288,6 +324,7 @@ $(function () {
         var model = {
             name: name,
             type: $modelType.val(),
+            manufacturer: getManufacturer(),
             datasheet: getDatasheetValues(),
             spice: getSpiceValues(),
             custom: customParams.slice()
@@ -367,6 +404,7 @@ $(function () {
         var result = SpiceEngine.generateModel({
             name: name,
             type: type,
+            manufacturer: getManufacturer(),
             spice: getSpiceValues(),
             custom: customParams,
             datasheet: getDatasheetValues()
@@ -388,6 +426,7 @@ $(function () {
         $('#customParamNameOther').val('').hide();
         $modelName.val('MY_NPN');
         $modelType.val('NPN');
+        setManufacturer('');
         customParams = [];
         renderCustomParams();
         $outputArea.text('/* Fill in the parameters and click Generate */');
@@ -473,6 +512,15 @@ $(function () {
                 });
             } else {
                 fallbackCopy();
+            }
+        });
+
+        // ─── Manufacturer Select ───
+        $('#modelManufacturer').on('change', function() {
+            if ($(this).val() === 'OTHER') {
+                $('#customManufacturer').show().focus();
+            } else {
+                $('#customManufacturer').hide();
             }
         });
 
