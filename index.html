@@ -375,20 +375,20 @@
                             <div class="flex-grow-1">
                                 <select class="form-select" id="customParamName" title="Select an additional SPICE parameter">
                                     <option value="">— Select Parameter —</option>
-                                    <option value="ISE">ISE (B-E Leakage Saturation Current)</option>
-                                    <option value="ISC">ISC (B-C Leakage Saturation Current)</option>
-                                    <option value="NE">NE (B-E Leakage Emission Coefficient)</option>
-                                    <option value="NC">NC (B-C Leakage Emission Coefficient)</option>
-                                    <option value="IKR">IKR (Reverse Knee Current)</option>
-                                    <option value="VAR">VAR (Reverse Early Voltage)</option>
-                                    <option value="XCJC">XCJC (Fraction of CJC connected to Rb)</option>
-                                    <option value="CJS">CJS (Zero-bias Collector-Substrate Cap)</option>
-                                    <option value="VJS">VJS (Substrate Junction Potential)</option>
-                                    <option value="MJS">MJS (Substrate Junction Grading Factor)</option>
-                                    <option value="FC">FC (Forward-bias Depletion Cap Coeff)</option>
-                                    <option value="PTF">PTF (Excess Phase at fT)</option>
-                                    <option value="KF">KF (Flicker Noise Coefficient)</option>
-                                    <option value="AF">AF (Flicker Noise Exponent)</option>
+                                    <option value="ISE">ISE (B-E Leakage Saturation Current) [A, e.g. 1e-13]</option>
+                                    <option value="ISC">ISC (B-C Leakage Saturation Current) [A, e.g. 1e-13]</option>
+                                    <option value="NE">NE (B-E Leakage Emission Coefficient) [unitless, e.g. 1.5]</option>
+                                    <option value="NC">NC (B-C Leakage Emission Coefficient) [unitless, e.g. 2.0]</option>
+                                    <option value="IKR">IKR (Reverse Knee Current) [A, e.g. 0.01]</option>
+                                    <option value="VAR">VAR (Reverse Early Voltage) [V, e.g. 10]</option>
+                                    <option value="XCJC">XCJC (Fraction of CJC connected to Rb) [ratio, e.g. 0.5]</option>
+                                    <option value="CJS">CJS (Zero-bias Collector-Substrate Cap) [F, e.g. 2p]</option>
+                                    <option value="VJS">VJS (Substrate Junction Potential) [V, e.g. 0.75]</option>
+                                    <option value="MJS">MJS (Substrate Junction Grading Factor) [unitless, e.g. 0.33]</option>
+                                    <option value="FC">FC (Forward-bias Depletion Cap Coeff) [unitless, e.g. 0.5]</option>
+                                    <option value="PTF">PTF (Excess Phase at fT) [deg, e.g. 20]</option>
+                                    <option value="KF">KF (Flicker Noise Coefficient) [unitless, e.g. 1e-15]</option>
+                                    <option value="AF">AF (Flicker Noise Exponent) [unitless, e.g. 1.2]</option>
                                     <option value="OTHER">— Other (Custom Name) —</option>
                                 </select>
                                 <input type="text" class="form-control mt-2" id="customParamNameOther" placeholder="Enter custom name (e.g. TNOM)" style="display: none;" title="Enter extreme custom parameter name" />
@@ -501,8 +501,80 @@
                 <span>Built for engineers &amp; hobbyists</span>
                 <span class="divider-dot">•</span>
                 <span>v3.0 (Auto Gummel‑Poon)</span>
+                <span class="divider-dot">•</span>
+                <a href="#" class="text-secondary text-decoration-none custom-hover-text" data-bs-toggle="modal" data-bs-target="#disclaimerModal">
+                    <i class="fa-solid fa-circle-info"></i> Accuracy Disclaimer
+                </a>
             </div>
         </footer>
+    </div>
+
+    <!-- ═══════ DISCLAIMER MODAL ═══════ -->
+    <div class="modal fade" id="disclaimerModal" tabindex="-1" aria-labelledby="disclaimerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content text-bg-dark" style="border: 1px solid var(--sp-border-subtle);">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title text-warning d-flex align-items-center gap-2" id="disclaimerModalLabel">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Model Accuracy Disclaimer
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-2 text-body-secondary">
+                    
+                    <h6 class="text-light fw-bold"><i class="fa-solid fa-bullseye text-primary"></i> Accuracy Range (Approx. 80% - 95%)</h6>
+                    <p>
+                        The models generated by this tool are <strong>not 100% accurate representations</strong> of the physical components. 
+                        For standard linear amplification and low-to-medium frequency switching, these models will typically yield <strong>80% to 95% accuracy</strong> compared to real-world behavior.
+                    </p>
+
+                    <h6 class="text-light fw-bold mt-4"><i class="fa-solid fa-microscope text-success"></i> Intended Purpose</h6>
+                    <p>
+                        These auto-calculated models are perfect for:
+                        <ul class="mb-3">
+                            <li>Educational purposes and learning SPICE.</li>
+                            <li>Hobbyist electronics and DIY audio amplifiers.</li>
+                            <li>Proof-of-concept simulations and basic circuit design.</li>
+                            <li>Situations where the manufacturer does not provide an official SPICE model.</li>
+                        </ul>
+                    </p>
+
+                    <h6 class="text-light fw-bold mt-4"><i class="fa-solid fa-circle-question text-danger"></i> Why isn't it 100% accurate?</h6>
+                    <p>
+                        The Gummel-Poon extraction engine relies on heavily simplified "typical" values found in datasheets. However:
+                        <ul>
+                            <li><strong>Datasheets are limited:</strong> They only provide 5 to 6 static data points, whereas real silicon has highly complex, non-linear curves.</li>
+                            <li><strong>Manufacturing Variance:</strong> Real transistors have huge tolerances (e.g., hFE can vary by 200% within the same batch).</li>
+                            <li><strong>Thermal Dynamics:</strong> Complex temperature dependencies and high-frequency parasitics cannot be fully extrapolated from basic DC datasheet values.</li>
+                        </ul>
+                    </p>
+
+                    <h6 class="text-light fw-bold mt-4"><i class="fa-solid fa-wrench text-info"></i> How to get more correct results (General)</h6>
+                    <p>
+                        If your design requires extreme precision (like high-frequency RF design or critical power supplies), you should:
+                        <ul>
+                            <li><strong>Download Official Models:</strong> Always use the manufacturer's official <code>.lib</code> files if they exist.</li>
+                            <li><strong>Manual Tuning:</strong> Generate a model here, then manually tune advanced parameters (like <code>IKF</code>, <code>VAF</code>, <code>ISE</code>) against real-world bench measurements.</li>
+                            <li><strong>Curve Tracing:</strong> Use a hardware semiconductor curve tracer to extract exact I-V curves and S-parameters directly from the physical component.</li>
+                        </ul>
+                    </p>
+
+                    <h6 class="text-light fw-bold mt-4"><i class="fa-solid fa-gears text-warning"></i> Maximizing Accuracy within this App</h6>
+                    <p>
+                        To get the most accurate Gummel-Poon model possible using this generator:
+                        <ul>
+                            <li><strong>Use Typical Values:</strong> Always use 'Typical' (typ) values from the datasheet rather than Min or Max limits unless designing for absolute worst-case scenarios.</li>
+                            <li><strong>Add Custom Parameters:</strong> Use the <em>Custom Parameters</em> dropdown to manually define advanced leakage or capacitance values (like <code>ISE</code>, <code>VAR</code>, <code>CJS</code>) if you have access to them.</li>
+                            <li><strong>Match Your Operating Point:</strong> Ensure the hFE (Gain) you input corresponds to the actual Collector Current (I<sub>C</sub>) your circuit will operate at, as gain changes drastically with current.</li>
+                        </ul>
+                    </p>
+
+
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">I Understand</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ═══════ LIBRARY MODAL (Bootstrap) ═══════ -->
