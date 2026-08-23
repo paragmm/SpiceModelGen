@@ -37,6 +37,7 @@ $(function () {
     function init() {
         SpiceUI.initParticles();
         SpiceUI.initCollapsibles();
+        SpiceUI.initThemeToggle();
         populatePresetDropdown();
         refreshLibraryDropdown();
         refreshLibCount();
@@ -151,7 +152,7 @@ $(function () {
     function renderCustomParams() {
         if (customParams.length === 0) {
             $customParamList.html(
-                '<div class="empty-state">' +
+                '<div class="empty-state text-center py-3 d-flex align-items-center justify-content-center gap-2">' +
                 '<i class="fa-regular fa-circle-dot"></i> No custom parameters added yet.</div>'
             );
             return;
@@ -271,8 +272,8 @@ $(function () {
 
         if (models.length === 0) {
             $libraryGrid.html(
-                '<div class="empty-state-large">' +
-                '<i class="fa-regular fa-folder-open"></i>' +
+                '<div class="empty-state-large text-center py-5">' +
+                '<i class="fa-regular fa-folder-open d-block mb-3"></i>' +
                 '<p>' + (query ? 'No models match your search.' : 'No models saved yet.') + '</p>' +
                 '<span>Generate a model and click "Save to Library" to get started.</span>' +
                 '</div>'
@@ -289,18 +290,18 @@ $(function () {
             if (m.custom) paramC += m.custom.length;
 
             html += '<div class="lib-card ' + typeClass + '" data-name="' + SpiceUI.escHtml(m.name) + '" style="animation-delay:' + (idx * 0.05) + 's;">';
-            html += '<div class="lib-card-header">';
+            html += '<div class="d-flex align-items-center justify-content-between mb-2">';
             html += '<span class="lib-card-name">' + SpiceUI.escHtml(m.name) + '</span>';
             html += '<span class="lib-card-type ' + typeClass + '">' + SpiceUI.escHtml(m.type) + '</span>';
             html += '</div>';
-            html += '<div class="lib-card-meta">';
+            html += '<div class="lib-card-meta d-flex flex-column gap-1 mb-3">';
             if (m.datasheet && m.datasheet.package) {
-                html += '<span><i class="fa-solid fa-cube"></i> ' + SpiceUI.escHtml(m.datasheet.package) + '</span>';
+                html += '<span class="d-flex align-items-center gap-2"><i class="fa-solid fa-cube"></i> ' + SpiceUI.escHtml(m.datasheet.package) + '</span>';
             }
-            html += '<span><i class="fa-solid fa-sliders"></i> ' + paramC + ' parameters</span>';
-            html += '<span><i class="fa-regular fa-calendar"></i> ' + savedDate + '</span>';
+            html += '<span class="d-flex align-items-center gap-2"><i class="fa-solid fa-sliders"></i> ' + paramC + ' parameters</span>';
+            html += '<span class="d-flex align-items-center gap-2"><i class="fa-regular fa-calendar"></i> ' + savedDate + '</span>';
             html += '</div>';
-            html += '<div class="lib-card-actions">';
+            html += '<div class="lib-card-actions d-flex gap-2 pt-2">';
             html += '<button class="btn btn-sm btn-primary lib-load-btn" data-name="' + SpiceUI.escHtml(m.name) + '">';
             html += '<i class="fa-solid fa-upload"></i> Load</button>';
             html += '<button class="btn btn-sm btn-accent lib-dl-btn" data-name="' + SpiceUI.escHtml(m.name) + '">';
@@ -487,29 +488,15 @@ $(function () {
             generateModel();
         });
 
-        // ─── Library Modal ───
+        // ─── Library Modal (Bootstrap Modal API) ───
         $('#openLibraryBtn').on('click', function () {
             renderLibraryModal('');
-            $('#libraryModal').addClass('active');
-            $('#librarySearch').val('').focus();
-        });
-
-        $('#closeLibraryModal').on('click', function () {
-            $('#libraryModal').removeClass('active');
-        });
-
-        // Close modal on overlay click
-        $('#libraryModal').on('click', function (e) {
-            if ($(e.target).hasClass('modal-overlay')) {
-                $(this).removeClass('active');
-            }
-        });
-
-        // Close modal on Escape key
-        $(document).on('keydown', function (e) {
-            if (e.key === 'Escape') {
-                $('#libraryModal').removeClass('active');
-            }
+            SpiceUI.openLibraryModal();
+            $('#librarySearch').val('');
+            // Focus search after modal is shown
+            $('#libraryModal').one('shown.bs.modal', function () {
+                $('#librarySearch').focus();
+            });
         });
 
         // Library search
@@ -522,7 +509,7 @@ $(function () {
             e.stopPropagation();
             var name = $(this).data('name');
             loadFromLibrary(name);
-            $('#libraryModal').removeClass('active');
+            SpiceUI.closeLibraryModal();
         });
 
         $(document).on('click', '.lib-dl-btn', function (e) {

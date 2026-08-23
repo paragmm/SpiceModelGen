@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════
- *  ui.js — UI Utilities: toast, collapse, particles
+ *  ui.js — UI Utilities: toast, collapse, particles, theme
  * ═══════════════════════════════════════════════════════
  */
 
@@ -8,6 +8,49 @@ var SpiceUI = (function () {
     'use strict';
 
     var toastTimeout = null;
+    var bsModal = null;
+
+    // ─── Theme Toggle ──────────────────────────────────
+
+    /**
+     * Initialize the dark/light theme toggle.
+     * Reads saved preference from localStorage, applies it,
+     * and wires up the toggle button.
+     */
+    function initThemeToggle() {
+        var $btn = $('#themeToggleBtn');
+        var savedTheme = localStorage.getItem('sp_theme') || 'dark';
+
+        applyTheme(savedTheme);
+
+        $btn.on('click', function () {
+            var current = $('html').attr('data-bs-theme');
+            var next = (current === 'dark') ? 'light' : 'dark';
+            applyTheme(next);
+            localStorage.setItem('sp_theme', next);
+        });
+    }
+
+    /**
+     * Apply a theme by name.
+     * @param {string} theme - 'dark' or 'light'
+     */
+    function applyTheme(theme) {
+        $('html').attr('data-bs-theme', theme);
+
+        var $btn = $('#themeToggleBtn');
+        var $icon = $btn.find('i');
+
+        if (theme === 'light') {
+            $icon.removeClass('fa-moon').addClass('fa-sun');
+            $btn.attr('title', 'Switch to dark mode');
+        } else {
+            $icon.removeClass('fa-sun').addClass('fa-moon');
+            $btn.attr('title', 'Switch to light mode');
+        }
+    }
+
+    // ─── Toast ─────────────────────────────────────────
 
     /**
      * Show a toast notification.
@@ -36,6 +79,36 @@ var SpiceUI = (function () {
         }, 3000);
     }
 
+    // ─── Bootstrap Modal Helpers ───────────────────────
+
+    /**
+     * Get or create the Bootstrap Modal instance for the library modal.
+     * @returns {bootstrap.Modal}
+     */
+    function getLibraryModal() {
+        if (!bsModal) {
+            var modalEl = document.getElementById('libraryModal');
+            bsModal = new bootstrap.Modal(modalEl);
+        }
+        return bsModal;
+    }
+
+    /**
+     * Open the library modal.
+     */
+    function openLibraryModal() {
+        getLibraryModal().show();
+    }
+
+    /**
+     * Close the library modal.
+     */
+    function closeLibraryModal() {
+        getLibraryModal().hide();
+    }
+
+    // ─── Collapsible Cards ─────────────────────────────
+
     /**
      * Initialize card collapse/expand toggles.
      */
@@ -54,6 +127,8 @@ var SpiceUI = (function () {
             }
         });
     }
+
+    // ─── Background Particles ──────────────────────────
 
     /**
      * Initialize background particles.
@@ -83,6 +158,8 @@ var SpiceUI = (function () {
         }
     }
 
+    // ─── Utilities ─────────────────────────────────────
+
     /**
      * Escape HTML to prevent XSS.
      */
@@ -92,8 +169,11 @@ var SpiceUI = (function () {
 
     return {
         showToast: showToast,
+        initThemeToggle: initThemeToggle,
         initCollapsibles: initCollapsibles,
         initParticles: initParticles,
+        openLibraryModal: openLibraryModal,
+        closeLibraryModal: closeLibraryModal,
         escHtml: escHtml
     };
 })();
