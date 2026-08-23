@@ -1,8 +1,9 @@
 {
     "name": "2SC5200",
     "type": "NPN",
+    "manufacturer": "",
     "datasheet": {
-        "vceo": "231",
+        "vceo": "230",
         "ic": "15000",
         "hfe_min": "80",
         "hfe_max": "160",
@@ -65,5 +66,5 @@
             "value": "0.78"
         }
     ],
-    "savedAt": "2026-08-23T18:05:47.527Z"
+    "savedAt": "2026-08-23T19:45:01.113Z"
 }

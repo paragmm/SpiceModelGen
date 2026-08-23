@@ -232,8 +232,18 @@ $(function () {
         }
     }
 
+    function getActualModelName() {
+        var name = $modelName.val().trim();
+        var appendMfg = $('#appendManufacturer').is(':checked');
+        var mfg = getManufacturer();
+        if (appendMfg && mfg) {
+            name = name + '-' + mfg.replace(/\s+/g, '');
+        }
+        return name;
+    }
+
     function generateModel() {
-        var name = $modelName.val().trim() || 'MY_NPN';
+        var name = getActualModelName() || 'MY_NPN';
         var type = $modelType.val() || 'NPN';
 
         $displayName.text(name);
@@ -320,7 +330,7 @@ $(function () {
     // ═══════════════════════════════════════════════════
 
     function saveToLibrary() {
-        var name = $modelName.val().trim();
+        var name = getActualModelName();
         if (!name) {
             SpiceUI.showToast('Please enter a model name first.', 'error');
             return;
@@ -406,7 +416,7 @@ $(function () {
     // ═══════════════════════════════════════════════════
 
     function downloadCurrentAsLib() {
-        var name = $modelName.val().trim() || 'MY_MODEL';
+        var name = getActualModelName() || 'MY_MODEL';
         var type = $modelType.val() || 'NPN';
 
         var result = SpiceEngine.generateModel({
