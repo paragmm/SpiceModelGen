@@ -53,13 +53,28 @@ SpiceModelGen/
 
 ---
 
-## Getting Started
+## Getting Started (New Local Backend)
 
-1. Open `index.html` in any modern browser
-2. Select a **Preset** or enter your own datasheet values
-3. Click **"Auto‑calc Gummel‑Poon"** to calculate SPICE parameters
-4. Click **"Generate Model"** to see the output
-5. **Save** to library, **Copy** to clipboard, or **Download** as `.lib`
+Because the application now saves library files directly to your local file system, you must start the local Node.js server to use it.
+
+### 1. Install Dependencies
+Ensure you have [Node.js](https://nodejs.org/) installed. Open your terminal in the project directory and run:
+```bash
+npm install
+```
+*(This installs `express` and `cors` required for the local server).*
+
+### 2. Start the Server
+Run the following command to start the backend API:
+```bash
+node server.js
+```
+
+### 3. Open the App
+Once the server is running, open your web browser and navigate to:
+**http://localhost:3000**
+
+*(Note: Do not open `index.html` directly from your file system anymore, as the local server handles routing and file saving).*
 
 ---
 

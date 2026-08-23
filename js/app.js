@@ -39,13 +39,16 @@ $(function () {
         SpiceUI.initCollapsibles();
         SpiceUI.initThemeToggle();
         SpiceUI.initTooltips();
-        populatePresetDropdown();
-        refreshLibraryDropdown();
-        refreshLibCount();
-        bindEvents();
+        
+        SpiceLibrary.syncFromBackend().then(function() {
+            populatePresetDropdown();
+            refreshLibraryDropdown();
+            refreshLibCount();
+            bindEvents();
 
-        // Load default preset
-        loadPreset('bc847b');
+            // Load default preset
+            loadPreset('bc847b');
+        });
     }
 
     // ═══════════════════════════════════════════════════

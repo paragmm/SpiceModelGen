@@ -10,6 +10,26 @@ var SpiceLibrary = (function () {
     'use strict';
 
     var STORAGE_KEY = 'spice_model_library';
+    var API_URL = 'http://localhost:3000/api/library';
+
+    /**
+     * Sync models from backend server to local cache
+     */
+    function syncFromBackend() {
+        return fetch(API_URL)
+            .then(function(res) {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            })
+            .then(function(models) {
+                saveAll(models); // Cache in localStorage
+                return true;
+            })
+            .catch(function(err) {
+                console.warn('Backend sync failed, falling back to local cache.', err);
+                return false;
+            });
+    }
 
     /**
      * Get all models from storage.
@@ -56,22 +76,28 @@ var SpiceLibrary = (function () {
 
         model.savedAt = new Date().toISOString();
 
+        var isNew = true;
         if (existing >= 0) {
             models[existing] = model;
-            saveAll(models);
-            return false; // updated
+            isNew = false;
         } else {
             models.push(model);
-            saveAll(models);
-            return true; // added
         }
+        
+        saveAll(models);
+
+        // Sync to backend asynchronously
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(model)
+        }).catch(function(err) {
+            console.error('Failed to save to backend:', err);
+        });
+
+        return isNew;
     }
 
-    /**
-     * Delete a model by name.
-     * @param {string} name
-     * @returns {boolean}
-     */
     function remove(name) {
         var models = getAll();
         var filtered = models.filter(function (m) {
@@ -79,6 +105,14 @@ var SpiceLibrary = (function () {
         });
         if (filtered.length < models.length) {
             saveAll(filtered);
+            
+            // Sync to backend asynchronously
+            fetch(API_URL + '/' + encodeURIComponent(name), {
+                method: 'DELETE'
+            }).catch(function(err) {
+                console.error('Failed to delete from backend:', err);
+            });
+
             return true;
         }
         return false;
@@ -257,6 +291,7 @@ var SpiceLibrary = (function () {
         downloadModelAsLib: downloadModelAsLib,
         downloadAllAsLib: downloadAllAsLib,
         downloadAsJSON: downloadAsJSON,
-        getModelJSON: getModelJSON
+        getModelJSON: getModelJSON,
+        syncFromBackend: syncFromBackend
     };
 })();
