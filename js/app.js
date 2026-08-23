@@ -384,6 +384,8 @@ $(function () {
                 $(this).val('');
             }
         });
+        $('#customParamName').val('');
+        $('#customParamNameOther').val('').hide();
         $modelName.val('MY_NPN');
         $modelType.val('NPN');
         customParams = [];
@@ -500,10 +502,23 @@ $(function () {
         $('#clearBtn').on('click', function () {
             clearAllFields(false);
         });
+        // ─── Custom Param Select Change ───
+        $('#customParamName').on('change', function() {
+            if ($(this).val() === 'OTHER') {
+                $('#customParamNameOther').show().focus();
+            } else {
+                $('#customParamNameOther').hide();
+            }
+        });
 
         // ─── Add Custom Param ───
         $('#addCustomParamBtn').on('click', function () {
-            var name = $('#customParamName').val().trim();
+            var name = $('#customParamName').val();
+            if (name === 'OTHER') {
+                name = $('#customParamNameOther').val().trim();
+            } else {
+                name = name ? name.trim() : '';
+            }
             var value = $('#customParamValue').val().trim();
             if (!name || !value) {
                 SpiceUI.showToast('Enter both parameter name and value.', '');
@@ -518,6 +533,7 @@ $(function () {
             }
             customParams.push({ name: name, value: value });
             $('#customParamName').val('');
+            $('#customParamNameOther').val('').hide();
             $('#customParamValue').val('');
             renderCustomParams();
             generateModel();
@@ -525,7 +541,7 @@ $(function () {
         });
 
         // Enter key in custom param fields
-        $('#customParamName, #customParamValue').on('keydown', function (e) {
+        $('#customParamName, #customParamNameOther, #customParamValue').on('keydown', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 $('#addCustomParamBtn').click();

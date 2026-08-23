@@ -373,8 +373,25 @@
                     <div class="card-body sp-collapse-body" id="customBody">
                         <div class="d-flex gap-2 align-items-end mb-3">
                             <div class="flex-grow-1">
-                                <input type="text" class="form-control" id="customParamName" placeholder="Parameter name (e.g. CJS)"
-                                       title="Enter any additional SPICE parameter name." />
+                                <select class="form-select" id="customParamName" title="Select an additional SPICE parameter">
+                                    <option value="">— Select Parameter —</option>
+                                    <option value="ISE">ISE (B-E Leakage Saturation Current)</option>
+                                    <option value="ISC">ISC (B-C Leakage Saturation Current)</option>
+                                    <option value="NE">NE (B-E Leakage Emission Coefficient)</option>
+                                    <option value="NC">NC (B-C Leakage Emission Coefficient)</option>
+                                    <option value="IKR">IKR (Reverse Knee Current)</option>
+                                    <option value="VAR">VAR (Reverse Early Voltage)</option>
+                                    <option value="XCJC">XCJC (Fraction of CJC connected to Rb)</option>
+                                    <option value="CJS">CJS (Zero-bias Collector-Substrate Cap)</option>
+                                    <option value="VJS">VJS (Substrate Junction Potential)</option>
+                                    <option value="MJS">MJS (Substrate Junction Grading Factor)</option>
+                                    <option value="FC">FC (Forward-bias Depletion Cap Coeff)</option>
+                                    <option value="PTF">PTF (Excess Phase at fT)</option>
+                                    <option value="KF">KF (Flicker Noise Coefficient)</option>
+                                    <option value="AF">AF (Flicker Noise Exponent)</option>
+                                    <option value="OTHER">— Other (Custom Name) —</option>
+                                </select>
+                                <input type="text" class="form-control mt-2" id="customParamNameOther" placeholder="Enter custom name (e.g. TNOM)" style="display: none;" title="Enter extreme custom parameter name" />
                             </div>
                             <div style="flex: 0.8;">
                                 <input type="text" class="form-control" id="customParamValue" placeholder="Value"
