@@ -249,9 +249,14 @@ $(function () {
         });
 
         $outputArea.text(result.text);
+        $('#outputAreaOneLine').text(result.oneLine);
         $paramCount.text(result.paramCount + ' params');
         $outputArea.addClass('generating');
-        setTimeout(function () { $outputArea.removeClass('generating'); }, 500);
+        $('#outputAreaOneLine').addClass('generating');
+        setTimeout(function () { 
+            $outputArea.removeClass('generating'); 
+            $('#outputAreaOneLine').removeClass('generating'); 
+        }, 500);
     }
 
     // ═══════════════════════════════════════════════════
@@ -373,6 +378,9 @@ $(function () {
             html += '<span class="lib-card-type ' + typeClass + '">' + SpiceUI.escHtml(m.type) + '</span>';
             html += '</div>';
             html += '<div class="lib-card-meta d-flex flex-column gap-1 mb-3">';
+            if (m.manufacturer) {
+                html += '<span class="d-flex align-items-center gap-2" style="color: var(--sp-text-muted);"><i class="fa-solid fa-building"></i> ' + SpiceUI.escHtml(m.manufacturer) + '</span>';
+            }
             if (m.datasheet && m.datasheet.package) {
                 html += '<span class="d-flex align-items-center gap-2"><i class="fa-solid fa-cube"></i> ' + SpiceUI.escHtml(m.datasheet.package) + '</span>';
             }
@@ -430,6 +438,7 @@ $(function () {
         customParams = [];
         renderCustomParams();
         $outputArea.text('/* Fill in the parameters and click Generate */');
+        $('#outputAreaOneLine').text('/* 1-line format will appear here */');
         $paramCount.text('0 params');
         $displayName.text('MY_NPN');
         $displayType.text('NPN');
@@ -508,10 +517,28 @@ $(function () {
                 navigator.clipboard.writeText(text).then(function () {
                     SpiceUI.showToast('Model copied to clipboard!', 'success');
                 }).catch(function () {
-                    fallbackCopy();
+                    fallbackCopy($outputArea[0]);
                 });
             } else {
-                fallbackCopy();
+                fallbackCopy($outputArea[0]);
+            }
+        });
+
+        $('#copyOneLineBtn').on('click', function (e) {
+            e.preventDefault();
+            var text = $('#outputAreaOneLine').text();
+            if (!text || text.indexOf('1-line format') !== -1) {
+                SpiceUI.showToast('Nothing to copy – generate a model first.', '');
+                return;
+            }
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function () {
+                    SpiceUI.showToast('1-Line Model copied!', 'success');
+                }).catch(function () {
+                    fallbackCopy($('#outputAreaOneLine')[0]);
+                });
+            } else {
+                fallbackCopy($('#outputAreaOneLine')[0]);
             }
         });
 
@@ -524,12 +551,12 @@ $(function () {
             }
         });
 
-        function fallbackCopy() {
+        function fallbackCopy(node) {
             var range = document.createRange();
-            range.selectNode($outputArea[0]);
+            range.selectNode(node);
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(range);
-            document.execCommand('copy');
+            try { document.execCommand('copy'); } catch(e) {}
             window.getSelection().removeAllRanges();
             SpiceUI.showToast('Model copied!', 'success');
         }

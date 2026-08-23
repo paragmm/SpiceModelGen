@@ -208,10 +208,20 @@ var SpiceEngine = (function () {
             output += ')\n';
         }
 
+        var oneLine = '.model ' + name + ' ' + type + '(';
+        paramStrings.forEach(function(ps) {
+            oneLine += ps + ' ';
+        });
+        if (ds.vceo) oneLine += 'Vceo=' + ds.vceo + ' ';
+        if (ds.ic) oneLine += 'Icrating=' + ds.ic + 'm ';
+        if (opts.manufacturer) oneLine += 'mfg=' + opts.manufacturer + ' ';
+        oneLine = oneLine.trim() + ')';
+
         output += '\n* End of model\n';
 
         return {
             text: output,
+            oneLine: oneLine,
             paramCount: count
         };
     }
