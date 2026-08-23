@@ -1,0 +1,180 @@
+/* ═══════════════════════════════════════════════════════
+   Form Elements
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Field Groups ─── */
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.field-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.field-group label .hint {
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.field-group input,
+.field-group select {
+    background: var(--bg-input);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    transition: border var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+}
+
+.field-group input:focus,
+.field-group select:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px var(--accent-blue-glow);
+}
+
+.field-group input::placeholder {
+    color: var(--text-placeholder);
+    font-size: 13px;
+}
+
+.field-group input[title] {
+    cursor: help;
+}
+
+.field-group input[title]:hover {
+    border-color: var(--accent-blue);
+}
+
+/* ─── Input with icon ─── */
+.input-icon {
+    position: relative;
+}
+
+.input-icon i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.input-icon input,
+.input-icon select {
+    padding-left: 36px;
+}
+
+/* ─── Field Row (two columns) ─── */
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* ─── Custom Parameter Input ─── */
+.custom-param-input {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 12px;
+}
+
+/* ─── Parameter List ─── */
+.param-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.param-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.param-list::-webkit-scrollbar-track {
+    background: var(--bg-input);
+    border-radius: 4px;
+}
+
+.param-list::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
+    border-radius: 4px;
+}
+
+/* ─── Param Row ─── */
+.param-row {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 32px;
+    gap: 8px;
+    align-items: center;
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    border: 1px solid var(--border-subtle);
+    transition: border-color var(--transition-fast);
+    animation: slideIn 0.2s ease;
+}
+
+.param-row:hover {
+    border-color: var(--border-default);
+}
+
+.param-row .pname {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--font-mono);
+}
+
+.param-row .pvalue {
+    color: var(--accent-blue-hover);
+    font-size: 13px;
+    font-family: var(--font-mono);
+}
+
+.param-row .del-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background var(--transition-fast), color var(--transition-fast);
+    text-align: center;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.param-row .del-btn:hover {
+    background: var(--accent-red-bg);
+    color: var(--accent-red);
+}
+
+/* ─── Auto-calc section ─── */
+.auto-calc-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+}

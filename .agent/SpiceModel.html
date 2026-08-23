@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPICE Model Generator – Auto Gummel‑Poon</title>
+    <style>
+        /* ─── Reset & Base ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #0b0e17;
+            color: #e4e8f0;
+            padding: 24px 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+        .app {
+            max-width: 1400px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h1 small {
+            font-size: 15px;
+            font-weight: 400;
+            color: #8e9bb5;
+            letter-spacing: 0px;
+        }
+        .subhead {
+            color: #8e9bb5;
+            font-size: 14px;
+            margin-bottom: 28px;
+            border-left: 3px solid #3b82f6;
+            padding-left: 14px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ─── Cards ─── */
+        .card {
+            background: #131a26;
+            border: 1px solid #253040;
+            border-radius: 14px;
+            padding: 20px 22px 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.2s;
+        }
+        .card:hover {
+            border-color: #314462;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            color: #8e9bb5;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title .badge {
+            background: #1f2a3a;
+            font-size: 11px;
+            font-weight: 400;
+            padding: 0 10px;
+            border-radius: 12px;
+            color: #a8b9d9;
+            text-transform: none;
+        }
+        .card-title .badge.blue {
+            background: #1a2a4a;
+            color: #6b9aff;
+        }
+
+        /* ─── Form elements ─── */
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 12px;
+        }
+        .field-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #bcc9e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .field-group label .hint {
+            font-weight: 400;
+            font-size: 11px;
+            color: #6a7b99;
+            margin-left: 4px;
+        }
+        .field-group input,
+        .field-group select {
+            background: #0c121d;
+            border: 1px solid #253040;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #e4e8f0;
+            font-family: 'Segoe UI', monospace;
+            transition: border 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        .field-group input:focus,
+        .field-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .field-group input::placeholder {
+            color: #4a5a78;
+            font-size: 13px;
+        }
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 480px) {
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ─── Tooltip styling (for title attribute) ─── */
+        input[title] {
+            cursor: help;
+        }
+        input[title]:hover {
+            border-color: #3b82f6;
+        }
+        .field-group .tooltip-hint {
+            display: inline-block;
+            margin-left: 4px;
+            font-size: 12px;
+            color: #6a7b99;
+            cursor: help;
+            border-bottom: 1px dashed #4a5a78;
+        }
+
+        /* ─── Buttons ─── */
+        .btn {
+            background: #1f2a3a;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #e4e8f0;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+        }
+        .btn:hover {
+            background: #2a3850;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: #1a4a8a;
+            border-color: #2a6abc;
+        }
+        .btn-primary:hover {
+            background: #2563b8;
+        }
+        .btn-success {
+            background: #0f4a3a;
+            border-color: #1a7a5a;
+        }
+        .btn-success:hover {
+            background: #1a6a4a;
+        }
+        .btn-warning {
+            background: #7a5a1a;
+            border-color: #a87a2a;
+        }
+        .btn-warning:hover {
+            background: #9a6a2a;
+        }
+        .btn-danger {
+            background: #5a1a2a;
+            border-color: #8a2a3a;
+        }
+        .btn-danger:hover {
+            background: #7a2a3a;
+        }
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+            font-size: 15px;
+        }
+
+        /* ─── Custom param rows ─── */
+        .param-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .param-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .param-list::-webkit-scrollbar-track {
+            background: #0c121d;
+            border-radius: 4px;
+        }
+        .param-list::-webkit-scrollbar-thumb {
+            background: #2a3850;
+            border-radius: 4px;
+        }
+        .param-row {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr 0.5fr 32px;
+            gap: 8px;
+            align-items: center;
+            background: #0c121d;
+            border-radius: 6px;
+            padding: 4px 8px 4px 10px;
+            border: 1px solid #1a2535;
+        }
+        .param-row input {
+            background: transparent;
+            border: none;
+            padding: 6px 4px;
+            font-size: 13px;
+            color: #e4e8f0;
+            font-family: 'Segoe UI', monospace;
+            width: 100%;
+        }
+        .param-row input:focus {
+            outline: none;
+            background: #101a2a;
+            border-radius: 4px;
+        }
+        .param-row .del-btn {
+            background: transparent;
+            border: none;
+            color: #6a7b99;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.15s, color 0.15s;
+            text-align: center;
+            line-height: 1;
+        }
+        .param-row .del-btn:hover {
+            background: #3a1a2a;
+            color: #f87171;
+        }
+        .param-row .pname {
+            color: #bcc9e0;
+        }
+        .param-row .pvalue {
+            color: #93c5fd;
+        }
+
+        /* ─── Output ─── */
+        .output-area {
+            background: #0a0f18;
+            border-radius: 10px;
+            border: 1px solid #1a2535;
+            padding: 16px 18px;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #c8d6e8;
+            max-height: 420px;
+            overflow-y: auto;
+            position: relative;
+            min-height: 160px;
+        }
+        .output-area .comment {
+            color: #6a7b99;
+            font-style: italic;
+        }
+
+        .output-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* ─── Preset dropdown ─── */
+        .preset-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .preset-bar label {
+            font-size: 13px;
+            color: #8e9bb5;
+        }
+        .preset-bar select {
+            background: #0c121d;
+            border: 1px solid #253040;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #e4e8f0;
+            cursor: pointer;
+            min-width: 180px;
+        }
+        .preset-bar select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        /* ─── Misc ─── */
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .flex {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .gap-4 {
+            gap: 4px;
+        }
+        .text-muted {
+            color: #6a7b99;
+            font-size: 12px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .border-top {
+            border-top: 1px solid #1a2535;
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+        .empty-state {
+            color: #4a5a78;
+            font-size: 13px;
+            text-align: center;
+            padding: 12px 0;
+        }
+        .info-badge {
+            background: #1a2a3a;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #8e9bb5;
+            border-left: 3px solid #3b82f6;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1a2a4a;
+            border: 1px solid #3b82f6;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #e4e8f0;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            z-index: 999;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.success {
+            border-color: #22c55e;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- Header -->
+        <h1>
+            ⚡ Datasheet → SPICE
+            <small>with Auto Gummel‑Poon</small>
+        </h1>
+        <div class="subhead">
+            Enter datasheet values → click <strong>“Auto‑calc Gummel‑Poon”</strong> → get a complete SPICE model instantly.
+            <br>
+            <span style="font-size:12px; color:#6a7b99;">🛈 Hover over any input field in the <em>Datasheet Values</em> section for guidance.</span>
+        </div>
+
+        <!-- Preset Loader -->
+        <div class="preset-bar">
+            <label for="presetSelect">📂 Load preset:</label>
+            <select id="presetSelect">
+                <option value="">— Custom —</option>
+                <option value="bc847b">BC847B (Nexperia-style)</option>
+                <option value="bc857b">BC857B (PNP complement)</option>
+                <option value="2n3904">2N3904 (classic NPN)</option>
+                <option value="2n3906">2N3906 (classic PNP)</option>
+            </select>
+            <button class="btn btn-sm" id="loadPresetBtn">Load</button>
+            <span class="text-muted" style="margin-left:4px;">or start fresh</span>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid-2">
+
+            <!-- LEFT COLUMN: Datasheet & SPICE params -->
+            <div>
+
+                <!-- Model Info -->
+                <div class="card">
+                    <div class="card-title">📋 Model Identity <span class="badge">required</span></div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>Model name <span class="hint">e.g. BC847B</span></label>
+                            <input type="text" id="modelName" value="MY_NPN" placeholder="MY_NPN" title="Give your model a unique name – this will be used in the .model statement." />
+                        </div>
+                        <div class="field-group">
+                            <label>Type</label>
+                            <select id="modelType" title="Choose the transistor polarity: NPN or PNP.">
+                                <option value="NPN">NPN</option>
+                                <option value="PNP">PNP</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Datasheet Parameters -->
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-title">📊 Datasheet Values <span class="badge">from the PDF</span></div>
+                    <div style="margin-bottom:12px; font-size:12px; color:#6a7b99; background:#0c121d; padding:6px 10px; border-radius:6px; border-left:3px solid #3b82f6;">
+                        <span>🛈 Hover over each input to see what to look for in your datasheet.</span>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>V<sub>CEO</sub> <span class="hint">(V)</span></label>
+                            <input type="text" id="ds_vceo" value="45" placeholder="e.g. 45"
+                                   title="Collector-Emitter Voltage (VCEO) – found in 'Absolute Maximum Ratings' table. This is the maximum voltage the transistor can withstand between collector and emitter with base open." />
+                        </div>
+                        <div class="field-group">
+                            <label>I<sub>C</sub> <span class="hint">(mA)</span></label>
+                            <input type="text" id="ds_ic" value="100" placeholder="e.g. 100"
+                                   title="Collector Current (IC) – from 'Absolute Maximum Ratings'. Maximum continuous DC current that can flow through the collector." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>h<sub>FE</sub> (min) <span class="hint">DC gain</span></label>
+                            <input type="text" id="ds_hfe_min" value="200" placeholder="e.g. 200"
+                                   title="Minimum DC current gain (hFE) – from 'Electrical Characteristics' table, usually at a specified IC (e.g. 2mA). Look for the 'Min' column." />
+                        </div>
+                        <div class="field-group">
+                            <label>h<sub>FE</sub> (max) <span class="hint">DC gain</span></label>
+                            <input type="text" id="ds_hfe_max" value="450" placeholder="e.g. 450"
+                                   title="Maximum DC current gain (hFE) – from the same row as hFE min. Look for the 'Max' column." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>f<sub>T</sub> <span class="hint">(MHz)</span></label>
+                            <input type="text" id="ds_ft" value="200" placeholder="e.g. 200"
+                                   title="Transition frequency (fT) – from 'Electrical Characteristics'. The frequency at which the small-signal current gain becomes unity. Usually given as 'Typ'." />
+                        </div>
+                        <div class="field-group">
+                            <label>V<sub>BE(on)</sub> <span class="hint">(mV)</span></label>
+                            <input type="text" id="ds_vbe" value="650" placeholder="e.g. 650"
+                                   title="Base-Emitter turn-on voltage (VBE(on)) – from 'Electrical Characteristics'. Typically specified at a given IC and VCE. Use the 'Typ' value (around 650-700mV)." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>V<sub>CE(sat)</sub> <span class="hint">(mV)</span></label>
+                            <input type="text" id="ds_vcesat" value="250" placeholder="e.g. 250"
+                                   title="Collector-Emitter saturation voltage (VCE(sat)) – from 'Electrical Characteristics'. Measured at specified IC and IB. Use the 'Max' value for worst-case design." />
+                        </div>
+                        <div class="field-group">
+                            <label>C<sub>ob</sub> <span class="hint">(pF)</span></label>
+                            <input type="text" id="ds_cob" value="3.0" placeholder="e.g. 3.0"
+                                   title="Output capacitance (Cob) – from 'Electrical Characteristics'. Usually measured at a given VCB and f=1MHz. This is the collector-base capacitance (CJC)." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>C<sub>ib</sub> <span class="hint">(pF)</span></label>
+                            <input type="text" id="ds_cib" value="8.0" placeholder="e.g. 8.0"
+                                   title="Input capacitance (Cib) – from 'Electrical Characteristics'. Typically measured at VBE=0.5V, IC=0. This is the base-emitter capacitance (CJE) plus CJC." />
+                        </div>
+                        <div class="field-group">
+                            <label>I<sub>CBO</sub> <span class="hint">(nA)</span></label>
+                            <input type="text" id="ds_icbo" value="15" placeholder="e.g. 15"
+                                   title="Collector cut-off current (ICBO) – from 'Electrical Characteristics'. Leakage current with emitter open. Usually given at 25°C and at a specified VCB." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>Package <span class="hint">optional</span></label>
+                            <input type="text" id="ds_package" value="SOT-23" placeholder="e.g. SOT-23"
+                                   title="Package type – found on the first page of the datasheet under 'Outline' or 'Package'. Optional, used for documentation." />
+                        </div>
+                        <div class="field-group">
+                            <label>Marking <span class="hint">optional</span></label>
+                            <input type="text" id="ds_marking" value="G1F" placeholder="e.g. G1F"
+                                   title="Device marking – the code printed on the component body. Found in the packaging/ordering information table. Optional." />
+                        </div>
+                    </div>
+
+                    <!-- Auto-calc button -->
+                    <div style="margin-top:14px;">
+                        <button class="btn btn-warning btn-block" id="autoCalcBtn">
+                            ✨ Auto‑calc Gummel‑Poon from datasheet
+                        </button>
+                        <div class="info-badge" style="margin-top:8px;">
+                            ⚡ Uses approximations based on your datasheet values.
+                            You can still tweak any parameter below.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SPICE Parameters -->
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-title">⚙️ SPICE Gummel‑Poon <span class="badge blue">core</span></div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>BF <span class="hint">forward beta</span></label>
+                            <input type="text" id="sp_bf" value="300" placeholder="300" title="Forward beta – the DC current gain in forward active region. Usually set to the geometric mean of hFE min and max." />
+                        </div>
+                        <div class="field-group">
+                            <label>IS <span class="hint">(A) saturation current</span></label>
+                            <input type="text" id="sp_is" value="1.12e-14" placeholder="1.12e-14" title="Saturation current – determines the base-emitter voltage for a given collector current. Extracted from VBE and IC using the diode equation." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>VAF <span class="hint">(V) Early voltage</span></label>
+                            <input type="text" id="sp_vaf" value="36" placeholder="36" title="Forward Early voltage – models the output conductance. Typical values 30-100V. From the slope of the output characteristics." />
+                        </div>
+                        <div class="field-group">
+                            <label>IKF <span class="hint">(A) high-current roll-off</span></label>
+                            <input type="text" id="sp_ikf" value="0.095" placeholder="0.095" title="Corner current for high-injection roll-off of BF. Typically ~1.5× IC(max)." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>NF <span class="hint">forward emission coeff</span></label>
+                            <input type="text" id="sp_nf" value="0.99" placeholder="0.99" title="Forward emission coefficient – usually between 0.98 and 1.0. Influences the VBE vs IC slope." />
+                        </div>
+                        <div class="field-group">
+                            <label>NR <span class="hint">reverse emission coeff</span></label>
+                            <input type="text" id="sp_nr" value="0.99" placeholder="0.99" title="Reverse emission coefficient – used in reverse active region, typically near 1." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>BR <span class="hint">reverse beta</span></label>
+                            <input type="text" id="sp_br" value="7" placeholder="7" title="Reverse beta – current gain in reverse active mode (emitter and collector swapped). Typically 4-10." />
+                        </div>
+                        <div class="field-group">
+                            <label>TF <span class="hint">(s) forward transit time</span></label>
+                            <input type="text" id="sp_tf" value="6.26e-10" placeholder="6.26e-10" title="Forward transit time – related to transition frequency fT: TF ≈ 1/(2π·fT)." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>TR <span class="hint">(s) reverse transit time</span></label>
+                            <input type="text" id="sp_tr" value="1.55e-7" placeholder="1.55e-7" title="Reverse transit time – typically 100-200× TF." />
+                        </div>
+                        <div class="field-group">
+                            <label>CJC <span class="hint">(F) collector-base cap</span></label>
+                            <input type="text" id="sp_cjc" value="3.62e-12" placeholder="3.62e-12" title="Collector-base zero-bias depletion capacitance – roughly equal to Cob (in Farads)." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>CJE <span class="hint">(F) base-emitter cap</span></label>
+                            <input type="text" id="sp_cje" value="1.26e-11" placeholder="1.26e-11" title="Base-emitter zero-bias depletion capacitance – approximated as Cib - Cob (if available)." />
+                        </div>
+                        <div class="field-group">
+                            <label>VJE <span class="hint">(V) BE built-in potential</span></label>
+                            <input type="text" id="sp_vje" value="0.70" placeholder="0.70" title="Base-emitter built-in potential – typically 0.65-0.75V." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>MJE <span class="hint">BE grading coeff</span></label>
+                            <input type="text" id="sp_mje" value="0.34" placeholder="0.34" title="Base-emitter grading coefficient – typically 0.33-0.5." />
+                        </div>
+                        <div class="field-group">
+                            <label>EG <span class="hint">(eV) energy gap</span></label>
+                            <input type="text" id="sp_eg" value="1.11" placeholder="1.11" title="Energy gap for temperature dependence – 1.11eV for silicon." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>XTI <span class="hint">temp exponent for IS</span></label>
+                            <input type="text" id="sp_xti" value="7.45" placeholder="7.45" title="Temperature exponent for saturation current – typical value for silicon is 3-4, but often 7.45 for improved fitting." />
+                        </div>
+                        <div class="field-group">
+                            <label>XTB <span class="hint">temp exponent for BF</span></label>
+                            <input type="text" id="sp_xtb" value="1.38" placeholder="1.38" title="Temperature exponent for beta – typical value around 1.5." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>RB <span class="hint">(Ω) base resistance</span></label>
+                            <input type="text" id="sp_rb" value="150" placeholder="150" title="Base resistance – parasitic series resistance in the base. Typical 100-200Ω." />
+                        </div>
+                        <div class="field-group">
+                            <label>RE <span class="hint">(Ω) emitter resistance</span></label>
+                            <input type="text" id="sp_re" value="0.8" placeholder="0.8" title="Emitter resistance – parasitic series resistance in the emitter. Typical 0.5-1Ω." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>RC <span class="hint">(Ω) collector resistance</span></label>
+                            <input type="text" id="sp_rc" value="0.25" placeholder="0.25" title="Collector resistance – parasitic series resistance in the collector. Typical 0.2-0.5Ω." />
+                        </div>
+                        <div class="field-group">
+                            <label>IRB <span class="hint">(A) RB roll-off current</span></label>
+                            <input type="text" id="sp_irb" value="0.0008" placeholder="0.0008" title="Current at which RB begins to fall – typically small (~1mA)." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>RBM <span class="hint">(Ω) min base resistance</span></label>
+                            <input type="text" id="sp_rbm" value="0.83" placeholder="0.83" title="Minimum base resistance at high current – often a few ohms." />
+                        </div>
+                        <div class="field-group">
+                            <label>XTF <span class="hint">TF bias dependence</span></label>
+                            <input type="text" id="sp_xtf" value="25" placeholder="25" title="Coefficient for bias dependence of TF – typically 20-30." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>VTF <span class="hint">(V) TF bias dependence</span></label>
+                            <input type="text" id="sp_vtf" value="2" placeholder="2" title="Voltage dependence of TF – typically 1-2V." />
+                        </div>
+                        <div class="field-group">
+                            <label>ITF <span class="hint">(A) TF high-current</span></label>
+                            <input type="text" id="sp_itf" value="0.277" placeholder="0.277" title="High-current dependence of TF – typically around 0.2-0.3A." />
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>VJC <span class="hint">(V) BC built-in potential</span></label>
+                            <input type="text" id="sp_vjc" value="0.50" placeholder="0.50" title="Collector-base built-in potential – typically 0.5-0.7V." />
+                        </div>
+                        <div class="field-group">
+                            <label>MJC <span class="hint">BC grading coeff</span></label>
+                            <input type="text" id="sp_mjc" value="0.37" placeholder="0.37" title="Collector-base grading coefficient – typically 0.33-0.5." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Parameters -->
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-title">➕ Custom Parameters <span class="badge">extra</span></div>
+                    <div class="flex" style="margin-bottom:10px;">
+                        <div class="field-group" style="flex:1;margin:0;">
+                            <input type="text" id="customParamName" placeholder="Parameter name (e.g. CJS)" title="Enter any additional SPICE parameter name (e.g., XCJC, CJS, FC)." />
+                        </div>
+                        <div class="field-group" style="flex:0.8;margin:0;">
+                            <input type="text" id="customParamValue" placeholder="Value" title="Enter the value for the custom parameter." />
+                        </div>
+                        <button class="btn btn-primary" id="addCustomParamBtn" style="align-self:flex-end;height:38px;">Add</button>
+                    </div>
+                    <div id="customParamList" class="param-list">
+                        <div class="empty-state">No custom parameters added yet.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Output -->
+            <div>
+
+                <div class="card" style="height:100%;display:flex;flex-direction:column;">
+
+                    <div class="card-title" style="justify-content:space-between;">
+                        <span>📄 Generated SPICE Model</span>
+                        <span class="badge blue" id="paramCount">0 params</span>
+                    </div>
+
+                    <div class="output-area" id="outputArea">
+                        <span class="comment">/* Fill in the parameters and click Generate */</span>
+                    </div>
+
+                    <div class="output-actions">
+                        <button class="btn btn-primary" id="generateBtn" style="flex:1;">
+                            ⚡ Generate Model
+                        </button>
+                        <button class="btn btn-success" id="copyBtn">
+                            📋 Copy
+                        </button>
+                        <button class="btn" id="clearBtn">
+                            🗑️ Clear
+                        </button>
+                    </div>
+
+                    <div class="border-top" style="margin-top:14px;">
+                        <div class="flex" style="justify-content:space-between;">
+                            <span class="text-muted">Model type: <strong id="displayType">NPN</strong></span>
+                            <span class="text-muted">Name: <strong id="displayName">MY_NPN</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Quick help -->
+                    <div style="margin-top:14px;background:#0c121d;border-radius:8px;padding:12px 14px;border:1px solid #1a2535;">
+                        <div style="font-size:12px;color:#8e9bb5;">
+                            💡 <strong>Tip:</strong> Fill the <em>Datasheet Values</em> section, then click
+                            <strong>“Auto‑calc Gummel‑Poon”</strong> to fill all SPICE parameters automatically.
+                            You can manually tweak any value before generating the final model.
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top:32px;text-align:center;font-size:13px;color:#4a5a78;border-top:1px solid #131a26;padding-top:20px;">
+            Built for engineers &amp; hobbyists · Generate SPICE models from any BJT datasheet · v2.0 (Auto‑GP)
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── DOM refs ──────────────────────────────────────────────
+            const $ = id => document.getElementById(id);
+
+            const modelName = $('modelName');
+            const modelType = $('modelType');
+
+            // Datasheet fields
+            const ds_vceo = $('ds_vceo');
+            const ds_ic = $('ds_ic');
+            const ds_hfe_min = $('ds_hfe_min');
+            const ds_hfe_max = $('ds_hfe_max');
+            const ds_ft = $('ds_ft');
+            const ds_vbe = $('ds_vbe');
+            const ds_vcesat = $('ds_vcesat');
+            const ds_cob = $('ds_cob');
+            const ds_cib = $('ds_cib');
+            const ds_icbo = $('ds_icbo');
+            const ds_package = $('ds_package');
+            const ds_marking = $('ds_marking');
+
+            // SPICE core fields
+            const sp_bf = $('sp_bf');
+            const sp_is = $('sp_is');
+            const sp_vaf = $('sp_vaf');
+            const sp_ikf = $('sp_ikf');
+            const sp_nf = $('sp_nf');
+            const sp_nr = $('sp_nr');
+            const sp_br = $('sp_br');
+            const sp_tf = $('sp_tf');
+            const sp_tr = $('sp_tr');
+            const sp_cjc = $('sp_cjc');
+            const sp_cje = $('sp_cje');
+            const sp_vje = $('sp_vje');
+            const sp_mje = $('sp_mje');
+            const sp_eg = $('sp_eg');
+            const sp_xti = $('sp_xti');
+            const sp_xtb = $('sp_xtb');
+            const sp_rb = $('sp_rb');
+            const sp_re = $('sp_re');
+            const sp_rc = $('sp_rc');
+            const sp_irb = $('sp_irb');
+            const sp_rbm = $('sp_rbm');
+            const sp_xtf = $('sp_xtf');
+            const sp_vtf = $('sp_vtf');
+            const sp_itf = $('sp_itf');
+            const sp_vjc = $('sp_vjc');
+            const sp_mjc = $('sp_mjc');
+
+            const outputArea = $('outputArea');
+            const generateBtn = $('generateBtn');
+            const copyBtn = $('copyBtn');
+            const clearBtn = $('clearBtn');
+            const presetSelect = $('presetSelect');
+            const loadPresetBtn = $('loadPresetBtn');
+            const displayType = $('displayType');
+            const displayName = $('displayName');
+            const paramCount = $('paramCount');
+
+            // Custom params
+            const customParamName = $('customParamName');
+            const customParamValue = $('customParamValue');
+            const addCustomParamBtn = $('addCustomParamBtn');
+            const customParamList = $('customParamList');
+
+            // Auto-calc button
+            const autoCalcBtn = $('autoCalcBtn');
+
+            // Toast
+            const toast = $('toast');
+            let toastTimeout = null;
+
+            // ─── State ──────────────────────────────────────────────
+            let customParams = []; // { name, value }
+
+            // ─── Presets ──────────────────────────────────────────────
+            const PRESETS = {
+                bc847b: {
+                    name: 'BC847B',
+                    type: 'NPN',
+                    ds: {
+                        vceo: '45',
+                        ic: '100',
+                        hfe_min: '200',
+                        hfe_max: '450',
+                        ft: '200',
+                        vbe: '650',
+                        vcesat: '250',
+                        cob: '3.0',
+                        cib: '8.0',
+                        icbo: '15',
+                        package: 'SOT-23',
+                        marking: 'G1F'
+                    },
+                    sp: {
+                        bf: '281.7',
+                        is: '1.124e-14',
+                        vaf: '36.27',
+                        ikf: '0.09455',
+                        nf: '0.9872',
+                        nr: '0.9859',
+                        br: '7.047',
+                        tf: '6.258e-10',
+                        tr: '1.55e-7',
+                        cjc: '3.624e-12',
+                        cje: '1.264e-11',
+                        vje: '0.7056',
+                        mje: '0.3401',
+                        eg: '1.11',
+                        xti: '7.452',
+                        xtb: '1.382',
+                        rb: '150',
+                        re: '0.804',
+                        rc: '0.2454',
+                        irb: '0.0008356',
+                        rbm: '0.8289',
+                        xtf: '25',
+                        vtf: '2',
+                        itf: '0.277',
+                        vjc: '0.5036',
+                        mjc: '0.365'
+                    },
+                    custom: [
+                        { name: 'XCJC', value: '1' },
+                        { name: 'CJS', value: '0' },
+                        { name: 'VJS', value: '0.75' },
+                        { name: 'MJS', value: '0.333' },
+                        { name: 'FC', value: '0.78' }
+                    ]
+                },
+                bc857b: {
+                    name: 'BC857B',
+                    type: 'PNP',
+                    ds: {
+                        vceo: '45',
+                        ic: '100',
+                        hfe_min: '200',
+                        hfe_max: '450',
+                        ft: '200',
+                        vbe: '650',
+                        vcesat: '250',
+                        cob: '3.0',
+                        cib: '8.0',
+                        icbo: '15',
+                        package: 'SOT-23',
+                        marking: 'G1F'
+                    },
+                    sp: {
+                        bf: '280',
+                        is: '1.0e-14',
+                        vaf: '35',
+                        ikf: '0.09',
+                        nf: '0.99',
+                        nr: '0.99',
+                        br: '6.5',
+                        tf: '6.5e-10',
+                        tr: '1.6e-7',
+                        cjc: '3.5e-12',
+                        cje: '1.2e-11',
+                        vje: '0.70',
+                        mje: '0.34',
+                        eg: '1.11',
+                        xti: '7.4',
+                        xtb: '1.38',
+                        rb: '150',
+                        re: '0.8',
+                        rc: '0.25',
+                        irb: '0.0008',
+                        rbm: '0.83',
+                        xtf: '25',
+                        vtf: '2',
+                        itf: '0.28',
+                        vjc: '0.50',
+                        mjc: '0.37'
+                    },
+                    custom: [
+                        { name: 'XCJC', value: '1' },
+                        { name: 'CJS', value: '0' }
+                    ]
+                },
+                '2n3904': {
+                    name: '2N3904',
+                    type: 'NPN',
+                    ds: {
+                        vceo: '40',
+                        ic: '200',
+                        hfe_min: '100',
+                        hfe_max: '300',
+                        ft: '300',
+                        vbe: '650',
+                        vcesat: '200',
+                        cob: '4.5',
+                        cib: '8.0',
+                        icbo: '50',
+                        package: 'TO-92',
+                        marking: '3904'
+                    },
+                    sp: {
+                        bf: '200',
+                        is: '6.7e-15',
+                        vaf: '40',
+                        ikf: '0.12',
+                        nf: '0.98',
+                        nr: '0.98',
+                        br: '4.5',
+                        tf: '4.0e-10',
+                        tr: '1.8e-7',
+                        cjc: '4.0e-12',
+                        cje: '1.1e-11',
+                        vje: '0.68',
+                        mje: '0.35',
+                        eg: '1.11',
+                        xti: '7.0',
+                        xtb: '1.4',
+                        rb: '120',
+                        re: '0.7',
+                        rc: '0.2',
+                        irb: '0.001',
+                        rbm: '0.7',
+                        xtf: '20',
+                        vtf: '1.5',
+                        itf: '0.3',
+                        vjc: '0.48',
+                        mjc: '0.36'
+                    },
+                    custom: [
+                        { name: 'XCJC', value: '1' }
+                    ]
+                },
+                '2n3906': {
+                    name: '2N3906',
+                    type: 'PNP',
+                    ds: {
+                        vceo: '40',
+                        ic: '200',
+                        hfe_min: '100',
+                        hfe_max: '300',
+                        ft: '250',
+                        vbe: '650',
+                        vcesat: '250',
+                        cob: '4.5',
+                        cib: '8.0',
+                        icbo: '50',
+                        package: 'TO-92',
+                        marking: '3906'
+                    },
+                    sp: {
+                        bf: '180',
+                        is: '5.0e-15',
+                        vaf: '35',
+                        ikf: '0.10',
+                        nf: '0.99',
+                        nr: '0.99',
+                        br: '4.0',
+                        tf: '4.5e-10',
+                        tr: '1.7e-7',
+                        cjc: '4.2e-12',
+                        cje: '1.0e-11',
+                        vje: '0.68',
+                        mje: '0.36',
+                        eg: '1.11',
+                        xti: '7.0',
+                        xtb: '1.4',
+                        rb: '130',
+                        re: '0.8',
+                        rc: '0.25',
+                        irb: '0.001',
+                        rbm: '0.75',
+                        xtf: '22',
+                        vtf: '1.8',
+                        itf: '0.25',
+                        vjc: '0.48',
+                        mjc: '0.36'
+                    },
+                    custom: [
+                        { name: 'XCJC', value: '1' }
+                    ]
+                }
+            };
+
+            // ─── Load preset ──────────────────────────────────────────
+            function loadPreset(key) {
+                const p = PRESETS[key];
+                if (!p) return;
+                modelName.value = p.name;
+                modelType.value = p.type;
+
+                if (p.ds) {
+                    ds_vceo.value = p.ds.vceo || '';
+                    ds_ic.value = p.ds.ic || '';
+                    ds_hfe_min.value = p.ds.hfe_min || '';
+                    ds_hfe_max.value = p.ds.hfe_max || '';
+                    ds_ft.value = p.ds.ft || '';
+                    ds_vbe.value = p.ds.vbe || '';
+                    ds_vcesat.value = p.ds.vcesat || '';
+                    ds_cob.value = p.ds.cob || '';
+                    ds_cib.value = p.ds.cib || '';
+                    ds_icbo.value = p.ds.icbo || '';
+                    ds_package.value = p.ds.package || '';
+                    ds_marking.value = p.ds.marking || '';
+                }
+
+                if (p.sp) {
+                    sp_bf.value = p.sp.bf || '';
+                    sp_is.value = p.sp.is || '';
+                    sp_vaf.value = p.sp.vaf || '';
+                    sp_ikf.value = p.sp.ikf || '';
+                    sp_nf.value = p.sp.nf || '';
+                    sp_nr.value = p.sp.nr || '';
+                    sp_br.value = p.sp.br || '';
+                    sp_tf.value = p.sp.tf || '';
+                    sp_tr.value = p.sp.tr || '';
+                    sp_cjc.value = p.sp.cjc || '';
+                    sp_cje.value = p.sp.cje || '';
+                    sp_vje.value = p.sp.vje || '';
+                    sp_mje.value = p.sp.mje || '';
+                    sp_eg.value = p.sp.eg || '';
+                    sp_xti.value = p.sp.xti || '';
+                    sp_xtb.value = p.sp.xtb || '';
+                    sp_rb.value = p.sp.rb || '';
+                    sp_re.value = p.sp.re || '';
+                    sp_rc.value = p.sp.rc || '';
+                    sp_irb.value = p.sp.irb || '';
+                    sp_rbm.value = p.sp.rbm || '';
+                    sp_xtf.value = p.sp.xtf || '';
+                    sp_vtf.value = p.sp.vtf || '';
+                    sp_itf.value = p.sp.itf || '';
+                    sp_vjc.value = p.sp.vjc || '';
+                    sp_mjc.value = p.sp.mjc || '';
+                }
+
+                customParams = (p.custom || []).map(c => ({ name: c.name, value: c.value }));
+                renderCustomParams();
+                showToast(`Loaded preset: ${p.name} (${p.type})`, 'success');
+                generateModel();
+            }
+
+            // ─── Custom params UI ────────────────────────────────────
+            function renderCustomParams() {
+                if (customParams.length === 0) {
+                    customParamList.innerHTML = `<div class="empty-state">No custom parameters added yet.</div>`;
+                    return;
+                }
+                let html = '';
+                customParams.forEach((p, idx) => {
+                    html += `
+                        <div class="param-row">
+                            <span class="pname">${escHtml(p.name)}</span>
+                            <span class="pvalue">${escHtml(p.value)}</span>
+                            <span></span>
+                            <button class="del-btn" data-idx="${idx}" title="Remove">✕</button>
+                        </div>
+                    `;
+                });
+                customParamList.innerHTML = html;
+                customParamList.querySelectorAll('.del-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const idx = parseInt(this.dataset.idx);
+                        customParams.splice(idx, 1);
+                        renderCustomParams();
+                        generateModel();
+                    });
+                });
+            }
+
+            function escHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // ─── Add custom param ────────────────────────────────────
+            addCustomParamBtn.addEventListener('click', function() {
+                const name = customParamName.value.trim();
+                const value = customParamValue.value.trim();
+                if (!name || !value) {
+                    showToast('Please enter both parameter name and value.', '');
+                    return;
+                }
+                if (customParams.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+                    showToast(`Parameter "${name}" already exists.`, '');
+                    return;
+                }
+                customParams.push({ name, value });
+                customParamName.value = '';
+                customParamValue.value = '';
+                renderCustomParams();
+                generateModel();
+                showToast(`Added ${name} = ${value}`, 'success');
+            });
+
+            customParamName.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault();
+                    addCustomParamBtn.click(); } });
+            customParamValue.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault();
+                    addCustomParamBtn.click(); } });
+
+            // ─── Auto‑calc Gummel‑Poon ──────────────────────────────
+            function autoCalcGummelPoon() {
+                // Read datasheet values (with fallbacks)
+                const hfeMin = parseFloat(ds_hfe_min.value) || 200;
+                const hfeMax = parseFloat(ds_hfe_max.value) || 450;
+                const ftMHz = parseFloat(ds_ft.value) || 200;
+                const vbeMV = parseFloat(ds_vbe.value) || 650;
+                const icMA = parseFloat(ds_ic.value) || 100;
+                const cobPF = parseFloat(ds_cob.value) || 3.0;
+                const cibPF = parseFloat(ds_cib.value) || 8.0;
+
+                // --- Calculations ---
+                // BF: geometric mean of hFE range
+                const BF = Math.round(Math.sqrt(hfeMin * hfeMax) * 10) / 10;
+
+                // IS: saturation current using VBE at IC=2mA (typical measurement condition)
+                const VT = 0.02585; // thermal voltage at 25°C
+                const NF = 0.987; // typical
+                const IC_REF = 0.002; // 2mA
+                const VBE_REF = vbeMV / 1000; // V
+                const IS = IC_REF / Math.exp(VBE_REF / (NF * VT));
+
+                // VAF: Early voltage, default 36V for general purpose
+                const VAF = 36;
+
+                // IKF: high-current roll-off, approx 1.5 * IC_max (A)
+                const IKF = (icMA * 1.5) / 1000;
+
+                // TF: forward transit time from fT (fT ≈ 1/(2π*TF))
+                const fT_Hz = ftMHz * 1e6;
+                const TF = 1 / (2 * Math.PI * fT_Hz);
+
+                // TR: reverse transit time ≈ 150 * TF
+                const TR = TF * 150;
+
+                // CJC ≈ Cob (pF to F)
+                const CJC = cobPF * 1e-12;
+
+                // CJE ≈ (Cib - Cob) if positive, else Cib
+                const CJE = (cibPF > cobPF) ? (cibPF - cobPF) * 1e-12 : cibPF * 1e-12;
+
+                // Other parameters (fixed typical values)
+                const NR = 0.9859;
+                const BR = 7.047;
+                const VJE = 0.7056;
+                const MJE = 0.3401;
+                const EG = 1.11;
+                const XTI = 7.452;
+                const XTB = 1.382;
+                const RB = 150;
+                const RE = 0.804;
+                const RC = 0.2454;
+                const IRB = 0.0008356;
+                const RBM = 0.8289;
+                const XTF = 25;
+                const VTF = 2;
+                const ITF = 0.277;
+                const VJC = 0.5036;
+                const MJC = 0.365;
+
+                // Populate SPICE core fields
+                sp_bf.value = BF;
+                sp_is.value = IS.toExponential(4);
+                sp_vaf.value = VAF;
+                sp_ikf.value = IKF.toFixed(6);
+                sp_nf.value = NF;
+                sp_nr.value = NR;
+                sp_br.value = BR;
+                sp_tf.value = TF.toExponential(4);
+                sp_tr.value = TR.toExponential(4);
+                sp_cjc.value = CJC.toExponential(4);
+                sp_cje.value = CJE.toExponential(4);
+                sp_vje.value = VJE;
+                sp_mje.value = MJE;
+                sp_eg.value = EG;
+                sp_xti.value = XTI;
+                sp_xtb.value = XTB;
+                sp_rb.value = RB;
+                sp_re.value = RE;
+                sp_rc.value = RC;
+                sp_irb.value = IRB;
+                sp_rbm.value = RBM;
+                sp_xtf.value = XTF;
+                sp_vtf.value = VTF;
+                sp_itf.value = ITF;
+                sp_vjc.value = VJC;
+                sp_mjc.value = MJC;
+
+                // Set typical custom parameters
+                customParams = [
+                    { name: 'XCJC', value: '1' },
+                    { name: 'CJS', value: '0' },
+                    { name: 'VJS', value: '0.75' },
+                    { name: 'MJS', value: '0.333' },
+                    { name: 'FC', value: '0.78' }
+                ];
+                renderCustomParams();
+                generateModel();
+                showToast('Gummel‑Poon parameters auto‑calculated from datasheet values!', 'success');
+            }
+
+            autoCalcBtn.addEventListener('click', autoCalcGummelPoon);
+
+            // ─── Generate SPICE model ────────────────────────────────
+            function generateModel() {
+                const name = modelName.value.trim() || 'MY_NPN';
+                const type = modelType.value || 'NPN';
+
+                displayName.textContent = name;
+                displayType.textContent = type;
+
+                const params = {};
+
+                function addParam(key, input) {
+                    const val = input.value.trim();
+                    if (val !== '') {
+                        params[key] = val;
+                    }
+                }
+
+                // Core SPICE params
+                addParam('BF', sp_bf);
+                addParam('IS', sp_is);
+                addParam('VAF', sp_vaf);
+                addParam('IKF', sp_ikf);
+                addParam('NF', sp_nf);
+                addParam('NR', sp_nr);
+                addParam('BR', sp_br);
+                addParam('TF', sp_tf);
+                addParam('TR', sp_tr);
+                addParam('CJC', sp_cjc);
+                addParam('CJE', sp_cje);
+                addParam('VJE', sp_vje);
+                addParam('MJE', sp_mje);
+                addParam('EG', sp_eg);
+                addParam('XTI', sp_xti);
+                addParam('XTB', sp_xtb);
+                addParam('RB', sp_rb);
+                addParam('RE', sp_re);
+                addParam('RC', sp_rc);
+                addParam('IRB', sp_irb);
+                addParam('RBM', sp_rbm);
+                addParam('XTF', sp_xtf);
+                addParam('VTF', sp_vtf);
+                addParam('ITF', sp_itf);
+                addParam('VJC', sp_vjc);
+                addParam('MJC', sp_mjc);
+
+                // Custom params
+                customParams.forEach(p => {
+                    if (p.name.trim() && p.value.trim()) {
+                        params[p.name.trim()] = p.value.trim();
+                    }
+                });
+
+                const paramStrings = [];
+                for (const [k, v] of Object.entries(params)) {
+                    paramStrings.push(`${k}=${v}`);
+                }
+
+                const count = paramStrings.length;
+                paramCount.textContent = `${count} params`;
+
+                let output = '';
+                const dsData = getDatasheetSummary();
+
+                output += `* ─── SPICE Model: ${name} (${type}) ───\n`;
+                output += `* Generated from datasheet parameters\n`;
+                if (dsData) {
+                    output += `*   VCEO=${dsData.vceo}V  IC=${dsData.ic}mA  hFE=${dsData.hfe_min}-${dsData.hfe_max}\n`;
+                    output += `*   fT=${dsData.ft}MHz  VBE(on)=${dsData.vbe}mV  VCE(sat)=${dsData.vcesat}mV\n`;
+                    if (dsData.package) output += `*   Package: ${dsData.package}\n`;
+                    if (dsData.marking) output += `*   Marking: ${dsData.marking}\n`;
+                }
+                output += `* ────────────────────────────────────────────────\n`;
+
+                if (count === 0) {
+                    output += `\n* No parameters defined. Fill in the fields and generate again.\n`;
+                } else {
+                    output += `\n.model ${name} ${type} (`;
+                    let line = `+ `;
+                    const perLine = 5;
+                    for (let i = 0; i < paramStrings.length; i++) {
+                        line += paramStrings[i];
+                        if (i < paramStrings.length - 1) line += ' ';
+                        if ((i + 1) % perLine === 0 && i < paramStrings.length - 1) {
+                            output += line + '\n';
+                            line = `+ `;
+                        }
+                    }
+                    if (line !== `+ `) {
+                        output += line;
+                    }
+                    output += `)\n`;
+                }
+
+                output += `\n* End of model\n`;
+                outputArea.textContent = output;
+            }
+
+            function getDatasheetSummary() {
+                return {
+                    vceo: ds_vceo.value.trim(),
+                    ic: ds_ic.value.trim(),
+                    hfe_min: ds_hfe_min.value.trim(),
+                    hfe_max: ds_hfe_max.value.trim(),
+                    ft: ds_ft.value.trim(),
+                    vbe: ds_vbe.value.trim(),
+                    vcesat: ds_vcesat.value.trim(),
+                    package: ds_package.value.trim(),
+                    marking: ds_marking.value.trim()
+                };
+            }
+
+            // ─── Copy ──────────────────────────────────────────────────
+            copyBtn.addEventListener('click', function() {
+                const text = outputArea.textContent;
+                if (!text || text.includes('Fill in the parameters')) {
+                    showToast('Nothing to copy — generate a model first.', '');
+                    return;
+                }
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('✅ Model copied to clipboard!', 'success');
+                }).catch(() => {
+                    const range = document.createRange();
+                    range.selectNode(outputArea);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    document.execCommand('copy');
+                    window.getSelection().removeAllRanges();
+                    showToast('✅ Model copied!', 'success');
+                });
+            });
+
+            // ─── Clear ──────────────────────────────────────────────────
+            clearBtn.addEventListener('click', function() {
+                if (!confirm('Clear all fields and start over?')) return;
+                document.querySelectorAll('input').forEach(inp => {
+                    if (inp.id !== 'modelName') inp.value = '';
+                });
+                modelName.value = 'MY_NPN';
+                modelType.value = 'NPN';
+                customParams = [];
+                renderCustomParams();
+                outputArea.textContent = '/* Fill in the parameters and click Generate */';
+                paramCount.textContent = '0 params';
+                displayName.textContent = 'MY_NPN';
+                displayType.textContent = 'NPN';
+                showToast('Cleared all fields.', '');
+            });
+
+            // ─── Generate on any change ──────────────────────────────
+            function autoGenerate() {
+                generateModel();
+            }
+
+            const allInputs = document.querySelectorAll('input, select');
+            allInputs.forEach(inp => {
+                inp.addEventListener('input', autoGenerate);
+                inp.addEventListener('change', autoGenerate);
+            });
+
+            // ─── Preset load ──────────────────────────────────────────
+            loadPresetBtn.addEventListener('click', function() {
+                const key = presetSelect.value;
+                if (!key) {
+                    showToast('Select a preset first.', '');
+                    return;
+                }
+                loadPreset(key);
+            });
+
+            // ─── Toast ──────────────────────────────────────────────────
+            function showToast(msg, type) {
+                toast.textContent = msg;
+                toast.className = 'toast';
+                if (type === 'success') toast.classList.add('success');
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2800);
+            }
+
+            // ─── Init ──────────────────────────────────────────────────
+            loadPreset('bc847b');
+            setTimeout(generateModel, 100);
+
+            window.__gen = { generateModel, loadPreset, autoCalcGummelPoon };
+
+        })();
+    </script>
+
+</body>
+</html>

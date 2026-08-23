@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPICE Model Generator – Datasheet to Gummel‑Poon</title>
+    <meta name="description" content="Generate complete SPICE Gummel-Poon BJT models from datasheet parameters. Auto-calculate, save to library, and export as .lib files." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/output.css" />
+    <link rel="stylesheet" href="css/library.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+    <!-- Animated background particles -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- Main App Container -->
+    <div class="app" id="app">
+
+        <!-- ═══════ HEADER ═══════ -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                </div>
+                <div>
+                    <h1>
+                        Datasheet → SPICE
+                        <small>Auto Gummel‑Poon Engine</small>
+                    </h1>
+                    <p class="subhead">
+                        <i class="fa-solid fa-microchip"></i>
+                        Enter datasheet values → click <strong>"Auto‑calc"</strong> → get a complete SPICE model instantly.
+                    </p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-ghost" id="themeToggleBtn" title="Toggle theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="btn btn-outline" id="openLibraryBtn">
+                    <i class="fa-solid fa-book"></i>
+                    <span>Library</span>
+                    <span class="badge-count" id="libCount">0</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ═══════ TOOLBAR ═══════ -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="toolbar-group">
+                    <label for="presetSelect"><i class="fa-solid fa-folder-open"></i> Preset:</label>
+                    <select id="presetSelect">
+                        <option value="">— Custom —</option>
+                    </select>
+                    <button class="btn btn-sm btn-primary" id="loadPresetBtn">
+                        <i class="fa-solid fa-download"></i> Load
+                    </button>
+                </div>
+                <div class="divider-v"></div>
+                <div class="toolbar-group">
+                    <label for="librarySelect"><i class="fa-solid fa-bookmark"></i> My Library:</label>
+                    <select id="librarySelect">
+                        <option value="">— Select saved model —</option>
+                    </select>
+                    <button class="btn btn-sm btn-success" id="loadLibraryBtn">
+                        <i class="fa-solid fa-upload"></i> Load
+                    </button>
+                    <button class="btn btn-sm btn-danger" id="deleteLibraryBtn" title="Delete selected">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <button class="btn btn-sm" id="importJsonBtn" title="Import library JSON">
+                    <i class="fa-solid fa-file-import"></i> Import
+                </button>
+                <button class="btn btn-sm" id="exportJsonBtn" title="Export library as JSON">
+                    <i class="fa-solid fa-file-export"></i> Export
+                </button>
+            </div>
+        </div>
+
+        <!-- ═══════ MAIN GRID ═══════ -->
+        <div class="grid-main">
+
+            <!-- ─── LEFT COLUMN: Input ─── -->
+            <div class="column-input">
+
+                <!-- Model Identity Card -->
+                <div class="card card-glow" id="cardIdentity">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-id-card"></i>
+                            Model Identity
+                            <span class="badge badge-required">required</span>
+                        </div>
+                        <button class="btn btn-icon btn-sm collapse-btn" data-target="identityBody">
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body" id="identityBody">
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>
+                                    Model Name
+                                    <span class="hint">e.g. BC847B</span>
+                                </label>
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-tag"></i>
+                                    <input type="text" id="modelName" value="MY_NPN" placeholder="MY_NPN"
+                                           title="Give your model a unique name – this will be used in the .model statement." />
+                                </div>
+                            </div>
+                            <div class="field-group">
+                                <label>
+                                    Type
+                                    <span class="hint">polarity</span>
+                                </label>
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-arrows-up-down"></i>
+                                    <select id="modelType" title="Choose the transistor polarity: NPN or PNP.">
+                                        <option value="NPN">NPN</option>
+                                        <option value="PNP">PNP</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Datasheet Values Card -->
+                <div class="card card-glow" id="cardDatasheet">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-chart-bar"></i>
+                            Datasheet Values
+                            <span class="badge badge-info">from the PDF</span>
+                        </div>
+                        <button class="btn btn-icon btn-sm collapse-btn" data-target="datasheetBody">
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body" id="datasheetBody">
+                        <div class="info-strip">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Hover over each input to see what to look for in your datasheet.
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>V<sub>CEO</sub> <span class="hint">(V)</span></label>
+                                <input type="text" id="ds_vceo" value="45" placeholder="e.g. 45"
+                                       title="Collector-Emitter Voltage (VCEO) – found in 'Absolute Maximum Ratings' table." />
+                            </div>
+                            <div class="field-group">
+                                <label>I<sub>C</sub> <span class="hint">(mA)</span></label>
+                                <input type="text" id="ds_ic" value="100" placeholder="e.g. 100"
+                                       title="Collector Current (IC) – Maximum continuous DC current through the collector." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>h<sub>FE</sub> (min) <span class="hint">DC gain</span></label>
+                                <input type="text" id="ds_hfe_min" value="200" placeholder="e.g. 200"
+                                       title="Minimum DC current gain (hFE) – from 'Electrical Characteristics' table." />
+                            </div>
+                            <div class="field-group">
+                                <label>h<sub>FE</sub> (max) <span class="hint">DC gain</span></label>
+                                <input type="text" id="ds_hfe_max" value="450" placeholder="e.g. 450"
+                                       title="Maximum DC current gain (hFE) – from the same row." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>f<sub>T</sub> <span class="hint">(MHz)</span></label>
+                                <input type="text" id="ds_ft" value="200" placeholder="e.g. 200"
+                                       title="Transition frequency (fT) – frequency at which small-signal current gain = 1." />
+                            </div>
+                            <div class="field-group">
+                                <label>V<sub>BE(on)</sub> <span class="hint">(mV)</span></label>
+                                <input type="text" id="ds_vbe" value="650" placeholder="e.g. 650"
+                                       title="Base-Emitter turn-on voltage (VBE(on)) – typically 650-700mV." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>V<sub>CE(sat)</sub> <span class="hint">(mV)</span></label>
+                                <input type="text" id="ds_vcesat" value="250" placeholder="e.g. 250"
+                                       title="Collector-Emitter saturation voltage (VCE(sat))." />
+                            </div>
+                            <div class="field-group">
+                                <label>C<sub>ob</sub> <span class="hint">(pF)</span></label>
+                                <input type="text" id="ds_cob" value="3.0" placeholder="e.g. 3.0"
+                                       title="Output capacitance (Cob) – collector-base capacitance (CJC)." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>C<sub>ib</sub> <span class="hint">(pF)</span></label>
+                                <input type="text" id="ds_cib" value="8.0" placeholder="e.g. 8.0"
+                                       title="Input capacitance (Cib) – base-emitter capacitance (CJE) plus CJC." />
+                            </div>
+                            <div class="field-group">
+                                <label>I<sub>CBO</sub> <span class="hint">(nA)</span></label>
+                                <input type="text" id="ds_icbo" value="15" placeholder="e.g. 15"
+                                       title="Collector cut-off current (ICBO) – leakage current with emitter open." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>Package <span class="hint">optional</span></label>
+                                <input type="text" id="ds_package" value="SOT-23" placeholder="e.g. SOT-23"
+                                       title="Package type – optional, used for documentation." />
+                            </div>
+                            <div class="field-group">
+                                <label>Marking <span class="hint">optional</span></label>
+                                <input type="text" id="ds_marking" value="G1F" placeholder="e.g. G1F"
+                                       title="Device marking code – optional." />
+                            </div>
+                        </div>
+
+                        <!-- Auto-calc button -->
+                        <div class="auto-calc-section">
+                            <button class="btn btn-warning btn-block btn-glow" id="autoCalcBtn">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                Auto‑calc Gummel‑Poon from Datasheet
+                            </button>
+                            <div class="info-strip info-strip-sm">
+                                <i class="fa-solid fa-bolt"></i>
+                                Uses approximations based on your datasheet values. You can still tweak any parameter below.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SPICE Parameters Card -->
+                <div class="card card-glow" id="cardSpice">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-gears"></i>
+                            SPICE Gummel‑Poon
+                            <span class="badge badge-blue">core</span>
+                        </div>
+                        <button class="btn btn-icon btn-sm collapse-btn" data-target="spiceBody">
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body" id="spiceBody">
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>BF <span class="hint">forward beta</span></label>
+                                <input type="text" id="sp_bf" value="300" placeholder="300" title="Forward beta – DC current gain in forward active region." />
+                            </div>
+                            <div class="field-group">
+                                <label>IS <span class="hint">(A) saturation current</span></label>
+                                <input type="text" id="sp_is" value="1.12e-14" placeholder="1.12e-14" title="Saturation current." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>VAF <span class="hint">(V) Early voltage</span></label>
+                                <input type="text" id="sp_vaf" value="36" placeholder="36" title="Forward Early voltage." />
+                            </div>
+                            <div class="field-group">
+                                <label>IKF <span class="hint">(A) high-current roll-off</span></label>
+                                <input type="text" id="sp_ikf" value="0.095" placeholder="0.095" title="Corner current for high-injection roll-off." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>NF <span class="hint">forward emission coeff</span></label>
+                                <input type="text" id="sp_nf" value="0.99" placeholder="0.99" title="Forward emission coefficient." />
+                            </div>
+                            <div class="field-group">
+                                <label>NR <span class="hint">reverse emission coeff</span></label>
+                                <input type="text" id="sp_nr" value="0.99" placeholder="0.99" title="Reverse emission coefficient." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>BR <span class="hint">reverse beta</span></label>
+                                <input type="text" id="sp_br" value="7" placeholder="7" title="Reverse beta – current gain in reverse mode." />
+                            </div>
+                            <div class="field-group">
+                                <label>TF <span class="hint">(s) forward transit time</span></label>
+                                <input type="text" id="sp_tf" value="6.26e-10" placeholder="6.26e-10" title="Forward transit time: TF ≈ 1/(2π·fT)." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>TR <span class="hint">(s) reverse transit time</span></label>
+                                <input type="text" id="sp_tr" value="1.55e-7" placeholder="1.55e-7" title="Reverse transit time ≈ 150 × TF." />
+                            </div>
+                            <div class="field-group">
+                                <label>CJC <span class="hint">(F) collector-base cap</span></label>
+                                <input type="text" id="sp_cjc" value="3.62e-12" placeholder="3.62e-12" title="Collector-base zero-bias depletion capacitance." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>CJE <span class="hint">(F) base-emitter cap</span></label>
+                                <input type="text" id="sp_cje" value="1.26e-11" placeholder="1.26e-11" title="Base-emitter zero-bias depletion capacitance." />
+                            </div>
+                            <div class="field-group">
+                                <label>VJE <span class="hint">(V) BE built-in potential</span></label>
+                                <input type="text" id="sp_vje" value="0.70" placeholder="0.70" title="Base-emitter built-in potential." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>MJE <span class="hint">BE grading coeff</span></label>
+                                <input type="text" id="sp_mje" value="0.34" placeholder="0.34" title="Base-emitter grading coefficient." />
+                            </div>
+                            <div class="field-group">
+                                <label>EG <span class="hint">(eV) energy gap</span></label>
+                                <input type="text" id="sp_eg" value="1.11" placeholder="1.11" title="Energy gap – 1.11eV for silicon." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>XTI <span class="hint">temp exponent for IS</span></label>
+                                <input type="text" id="sp_xti" value="7.45" placeholder="7.45" title="Temperature exponent for saturation current." />
+                            </div>
+                            <div class="field-group">
+                                <label>XTB <span class="hint">temp exponent for BF</span></label>
+                                <input type="text" id="sp_xtb" value="1.38" placeholder="1.38" title="Temperature exponent for beta." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>RB <span class="hint">(Ω) base resistance</span></label>
+                                <input type="text" id="sp_rb" value="150" placeholder="150" title="Base resistance." />
+                            </div>
+                            <div class="field-group">
+                                <label>RE <span class="hint">(Ω) emitter resistance</span></label>
+                                <input type="text" id="sp_re" value="0.8" placeholder="0.8" title="Emitter resistance." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>RC <span class="hint">(Ω) collector resistance</span></label>
+                                <input type="text" id="sp_rc" value="0.25" placeholder="0.25" title="Collector resistance." />
+                            </div>
+                            <div class="field-group">
+                                <label>IRB <span class="hint">(A) RB roll-off current</span></label>
+                                <input type="text" id="sp_irb" value="0.0008" placeholder="0.0008" title="Current at which RB begins to fall." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>RBM <span class="hint">(Ω) min base resistance</span></label>
+                                <input type="text" id="sp_rbm" value="0.83" placeholder="0.83" title="Minimum base resistance at high current." />
+                            </div>
+                            <div class="field-group">
+                                <label>XTF <span class="hint">TF bias dependence</span></label>
+                                <input type="text" id="sp_xtf" value="25" placeholder="25" title="Coefficient for bias dependence of TF." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>VTF <span class="hint">(V) TF bias dependence</span></label>
+                                <input type="text" id="sp_vtf" value="2" placeholder="2" title="Voltage dependence of TF." />
+                            </div>
+                            <div class="field-group">
+                                <label>ITF <span class="hint">(A) TF high-current</span></label>
+                                <input type="text" id="sp_itf" value="0.277" placeholder="0.277" title="High-current dependence of TF." />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label>VJC <span class="hint">(V) BC built-in potential</span></label>
+                                <input type="text" id="sp_vjc" value="0.50" placeholder="0.50" title="Collector-base built-in potential." />
+                            </div>
+                            <div class="field-group">
+                                <label>MJC <span class="hint">BC grading coeff</span></label>
+                                <input type="text" id="sp_mjc" value="0.37" placeholder="0.37" title="Collector-base grading coefficient." />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Parameters Card -->
+                <div class="card card-glow" id="cardCustom">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            Custom Parameters
+                            <span class="badge">extra</span>
+                        </div>
+                        <button class="btn btn-icon btn-sm collapse-btn" data-target="customBody">
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body" id="customBody">
+                        <div class="custom-param-input">
+                            <div class="field-group" style="flex:1;">
+                                <input type="text" id="customParamName" placeholder="Parameter name (e.g. CJS)"
+                                       title="Enter any additional SPICE parameter name." />
+                            </div>
+                            <div class="field-group" style="flex:0.8;">
+                                <input type="text" id="customParamValue" placeholder="Value"
+                                       title="Enter the value for the custom parameter." />
+                            </div>
+                            <button class="btn btn-primary" id="addCustomParamBtn" style="height:40px;">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div id="customParamList" class="param-list">
+                            <div class="empty-state">
+                                <i class="fa-regular fa-circle-dot"></i>
+                                No custom parameters added yet.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── RIGHT COLUMN: Output ─── -->
+            <div class="column-output">
+
+                <!-- Generated SPICE Model Card -->
+                <div class="card card-glow card-output" id="cardOutput">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-file-code"></i>
+                            Generated SPICE Model
+                        </div>
+                        <span class="badge badge-blue" id="paramCount">0 params</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="output-area" id="outputArea">
+                            <span class="comment">/* Fill in the parameters and click Generate */</span>
+                        </div>
+
+                        <div class="output-actions">
+                            <button class="btn btn-primary btn-glow" id="generateBtn">
+                                <i class="fa-solid fa-bolt-lightning"></i> Generate Model
+                            </button>
+                            <button class="btn btn-success" id="saveToLibBtn">
+                                <i class="fa-solid fa-bookmark"></i> Save to Library
+                            </button>
+                            <button class="btn btn-success" id="copyBtn">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                            <button class="btn btn-accent" id="downloadLibBtn">
+                                <i class="fa-solid fa-file-arrow-down"></i> Download .lib
+                            </button>
+                            <button class="btn btn-ghost" id="clearBtn">
+                                <i class="fa-solid fa-eraser"></i> Clear
+                            </button>
+                        </div>
+
+                        <div class="model-footer">
+                            <div class="model-meta">
+                                <span class="meta-item">
+                                    <i class="fa-solid fa-microchip"></i>
+                                    Type: <strong id="displayType">NPN</strong>
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fa-solid fa-tag"></i>
+                                    Name: <strong id="displayName">MY_NPN</strong>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Quick help -->
+                        <div class="help-tip">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <div>
+                                <strong>Tip:</strong> Fill the <em>Datasheet Values</em> section, then click
+                                <strong>"Auto‑calc Gummel‑Poon"</strong> to fill all SPICE parameters automatically.
+                                You can manually tweak any value before generating the final model.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download All from Library Card -->
+                <div class="card card-glow card-download" id="cardDownload">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-download"></i>
+                            Batch Export
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted" style="margin-bottom: 12px;">
+                            Download all saved models from your library as a single .lib file for use in SPICE simulators.
+                        </p>
+                        <button class="btn btn-accent btn-block" id="downloadAllLibBtn">
+                            <i class="fa-solid fa-file-zipper"></i> Download All Library as .lib
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ FOOTER ═══════ -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <span><i class="fa-solid fa-microchip"></i> SPICE Model Generator</span>
+                <span class="divider-dot">•</span>
+                <span>Built for engineers & hobbyists</span>
+                <span class="divider-dot">•</span>
+                <span>v3.0 (Auto Gummel‑Poon)</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ═══════ LIBRARY MODAL ═══════ -->
+    <div class="modal-overlay" id="libraryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-book"></i> Model Library</h2>
+                <button class="btn btn-icon" id="closeLibraryModal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="library-toolbar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="librarySearch" placeholder="Search models..." />
+                    </div>
+                    <div class="library-actions">
+                        <button class="btn btn-sm btn-accent" id="downloadAllFromModal">
+                            <i class="fa-solid fa-file-arrow-down"></i> Download All .lib
+                        </button>
+                        <button class="btn btn-sm btn-danger" id="clearLibraryBtn">
+                            <i class="fa-solid fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+                <div class="library-grid" id="libraryGrid">
+                    <div class="empty-state-large">
+                        <i class="fa-regular fa-folder-open"></i>
+                        <p>No models saved yet.</p>
+                        <span>Generate a model and click "Save to Library" to get started.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="importFileInput" accept=".json" style="display:none;" />
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-check-circle toast-icon"></i>
+        <span class="toast-msg"></span>
+    </div>
+
+    <!-- jQuery CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- App JS modules -->
+    <script src="js/presets.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/library.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

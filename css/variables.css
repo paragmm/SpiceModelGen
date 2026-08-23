@@ -1,0 +1,79 @@
+/* ═══════════════════════════════════════════════════════
+   CSS Custom Properties (Design Tokens)
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+    /* ─── Color Palette ─── */
+    --bg-primary: #06080f;
+    --bg-secondary: #0c1019;
+    --bg-card: #111827;
+    --bg-card-hover: #151d2e;
+    --bg-input: #080c15;
+    --bg-surface: #0d1320;
+
+    /* Borders */
+    --border-subtle: #1a2338;
+    --border-default: #253040;
+    --border-hover: #334466;
+    --border-accent: #3b82f6;
+
+    /* Text */
+    --text-primary: #e8ecf4;
+    --text-secondary: #bcc9e0;
+    --text-muted: #8e9bb5;
+    --text-dim: #5a6b88;
+    --text-placeholder: #3d4e6a;
+
+    /* Accent Colors */
+    --accent-blue: #3b82f6;
+    --accent-blue-hover: #5b9aff;
+    --accent-blue-glow: rgba(59, 130, 246, 0.15);
+    --accent-blue-deep: #1a4a8a;
+
+    --accent-green: #22c55e;
+    --accent-green-hover: #34d672;
+    --accent-green-bg: #0f3a2a;
+    --accent-green-border: #1a6a4a;
+
+    --accent-amber: #f59e0b;
+    --accent-amber-hover: #fbbf24;
+    --accent-amber-bg: #422006;
+    --accent-amber-border: #92400e;
+
+    --accent-red: #ef4444;
+    --accent-red-hover: #f87171;
+    --accent-red-bg: #3b1111;
+    --accent-red-border: #7f1d1d;
+
+    --accent-purple: #a855f7;
+    --accent-purple-glow: rgba(168, 85, 247, 0.12);
+
+    --accent-cyan: #06b6d4;
+
+    /* Gradients */
+    --gradient-header: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+    --gradient-card: linear-gradient(135deg, rgba(59, 130, 246, 0.04), rgba(139, 92, 246, 0.02));
+    --gradient-glow: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+    --shadow-glow-success: 0 0 20px rgba(34, 197, 94, 0.15);
+
+    /* Typography */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+
+    /* Sizing */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s ease;
+    --transition-slow: 0.4s ease;
+}
