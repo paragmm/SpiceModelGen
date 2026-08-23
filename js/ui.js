@@ -161,6 +161,16 @@ var SpiceUI = (function () {
     // ─── Utilities ─────────────────────────────────────
 
     /**
+     * Initialize Bootstrap tooltips
+     */
+    function initTooltips() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+
+    /**
      * Escape HTML to prevent XSS.
      */
     function escHtml(str) {
@@ -172,6 +182,7 @@ var SpiceUI = (function () {
         initThemeToggle: initThemeToggle,
         initCollapsibles: initCollapsibles,
         initParticles: initParticles,
+        initTooltips: initTooltips,
         openLibraryModal: openLibraryModal,
         closeLibraryModal: closeLibraryModal,
         escHtml: escHtml

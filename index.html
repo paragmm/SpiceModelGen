@@ -160,62 +160,62 @@
                             <div class="col-sm-6">
                                 <label class="form-label">V<sub>CEO</sub> <span class="hint">(V)</span></label>
                                 <input type="text" class="form-control" id="ds_vceo" value="45" placeholder="e.g. 45"
-                                       title="Collector-Emitter Voltage (VCEO) – found in 'Absolute Maximum Ratings' table." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Collector-Emitter Voltage (VCEO)</b><br>Max voltage before breakdown. Purpose: Defines voltage rating.<br><i>Practice: Set 10-20% higher than max expected operating voltage.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">I<sub>C</sub> <span class="hint">(mA)</span></label>
                                 <input type="text" class="form-control" id="ds_ic" value="100" placeholder="e.g. 100"
-                                       title="Collector Current (IC) – Maximum continuous DC current through the collector." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Collector Current (IC)</b><br>Max continuous current rating. Purpose: Current capacity.<br><i>Practice: Ensure circuit current stays well below this absolute max.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">h<sub>FE</sub> (min) <span class="hint">DC gain</span></label>
                                 <input type="text" class="form-control" id="ds_hfe_min" value="200" placeholder="e.g. 200"
-                                       title="Minimum DC current gain (hFE) – from 'Electrical Characteristics' table." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Min DC Current Gain (hFE min)</b><br>Lowest expected current amplification. Purpose: Sets baseline BF.<br><i>Practice: Use min value for conservative worst-case design.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">h<sub>FE</sub> (max) <span class="hint">DC gain</span></label>
                                 <input type="text" class="form-control" id="ds_hfe_max" value="450" placeholder="e.g. 450"
-                                       title="Maximum DC current gain (hFE) – from the same row." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Max DC Current Gain (hFE max)</b><br>Highest expected current amplification. Purpose: Bounds BF calculation.<br><i>Practice: Engine averages min/max for typical BF.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">f<sub>T</sub> <span class="hint">(MHz)</span></label>
                                 <input type="text" class="form-control" id="ds_ft" value="200" placeholder="e.g. 200"
-                                       title="Transition frequency (fT) – frequency at which small-signal current gain = 1." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Transition Frequency (fT)</b><br>Freq where AC gain drops to 1. Purpose: Determines TF (forward transit time).<br><i>Practice: Crucial for RF/switching speed accuracy.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">V<sub>BE(on)</sub> <span class="hint">(mV)</span></label>
                                 <input type="text" class="form-control" id="ds_vbe" value="650" placeholder="e.g. 650"
-                                       title="Base-Emitter turn-on voltage (VBE(on)) – typically 650-700mV." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Base-Emitter Turn-On (VBE on)</b><br>Typical forward voltage drop. Purpose: Sets IS and VJE.<br><i>Practice: Usually 650-700mV for Silicon. Check specific operating point in datasheet.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">V<sub>CE(sat)</sub> <span class="hint">(mV)</span></label>
                                 <input type="text" class="form-control" id="ds_vcesat" value="250" placeholder="e.g. 250"
-                                       title="Collector-Emitter saturation voltage (VCE(sat))." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Saturation Voltage (VCE sat)</b><br>Voltage drop when fully ON. Purpose: Sets RC (collector resistance).<br><i>Practice: Important for switching applications to calculate power dissipation.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">C<sub>ob</sub> <span class="hint">(pF)</span></label>
                                 <input type="text" class="form-control" id="ds_cob" value="3.0" placeholder="e.g. 3.0"
-                                       title="Output capacitance (Cob) – collector-base capacitance (CJC)." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Output Capacitance (Cob)</b><br>Collector-Base capacitance. Purpose: Sets CJC parameter.<br><i>Practice: Read at specified VCB (often 10V). Affects high-freq response (Miller effect).</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">C<sub>ib</sub> <span class="hint">(pF)</span></label>
                                 <input type="text" class="form-control" id="ds_cib" value="8.0" placeholder="e.g. 8.0"
-                                       title="Input capacitance (Cib) – base-emitter capacitance (CJE) plus CJC." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Input Capacitance (Cib)</b><br>Base-Emitter capacitance. Purpose: Sets CJE parameter.<br><i>Practice: Read at VEB (often 0.5V). Affects input impedance at high frequencies.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">I<sub>CBO</sub> <span class="hint">(nA)</span></label>
                                 <input type="text" class="form-control" id="ds_icbo" value="15" placeholder="e.g. 15"
-                                       title="Collector cut-off current (ICBO) – leakage current with emitter open." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Collector Cutoff Current (ICBO)</b><br>Leakage current. Purpose: Refines reverse parameters.<br><i>Practice: Only critical for high-temp or low-current precision circuits.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">Package <span class="hint">optional</span></label>
                                 <input type="text" class="form-control" id="ds_package" value="SOT-23" placeholder="e.g. SOT-23"
-                                       title="Package type – optional, used for documentation." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Package Type</b><br>Physical footprint. Purpose: Documentation only.<br><i>Practice: Use standard names (e.g., SOT-23, TO-92) for library sorting.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">Marking <span class="hint">optional</span></label>
                                 <input type="text" class="form-control" id="ds_marking" value="G1F" placeholder="e.g. G1F"
-                                       title="Device marking code – optional." />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>SMD Marking</b><br>Top mark code. Purpose: Documentation only.<br><i>Practice: Extremely helpful for identifying small SOT-23 parts later.</i>" />
                             </div>
                         </div>
 
@@ -249,107 +249,107 @@
                         <div class="row g-3">
                             <div class="col-sm-6">
                                 <label class="form-label">BF <span class="hint">forward beta</span></label>
-                                <input type="text" class="form-control" id="sp_bf" value="300" placeholder="300" title="Forward beta – DC current gain in forward active region." />
+                                <input type="text" class="form-control" id="sp_bf" value="300" placeholder="300" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Forward Beta (BF)</b><br>Ideal maximum forward current gain.<br><i>Practice: Usually derived from typical hFE. Core parameter for DC analysis.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">IS <span class="hint">(A) saturation current</span></label>
-                                <input type="text" class="form-control" id="sp_is" value="1.12e-14" placeholder="1.12e-14" title="Saturation current." />
+                                <input type="text" class="form-control" id="sp_is" value="1.12e-14" placeholder="1.12e-14" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Transport Saturation Current (IS)</b><br>Extrapolated intercept of VBE-IC curve.<br><i>Practice: Usually 1e-15 to 1e-12 A. Affects VBE drop.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">VAF <span class="hint">(V) Early voltage</span></label>
-                                <input type="text" class="form-control" id="sp_vaf" value="36" placeholder="36" title="Forward Early voltage." />
+                                <input type="text" class="form-control" id="sp_vaf" value="36" placeholder="36" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Forward Early Voltage (VAF)</b><br>Models finite output conductance.<br><i>Practice: Lower values (20-50V) mean steeper IC curve slope in active region.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">IKF <span class="hint">(A) high-current roll-off</span></label>
-                                <input type="text" class="form-control" id="sp_ikf" value="0.095" placeholder="0.095" title="Corner current for high-injection roll-off." />
+                                <input type="text" class="form-control" id="sp_ikf" value="0.095" placeholder="0.095" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>High-Current Roll-off (IKF)</b><br>Corner current where BF drops.<br><i>Practice: Derived from datasheet hFE vs IC curve. Critical for high-current accuracy.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">NF <span class="hint">forward emission coeff</span></label>
-                                <input type="text" class="form-control" id="sp_nf" value="0.99" placeholder="0.99" title="Forward emission coefficient." />
+                                <input type="text" class="form-control" id="sp_nf" value="0.99" placeholder="0.99" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Forward Emission Coeff (NF)</b><br>Non-ideality factor for forward current.<br><i>Practice: Almost always ~1.0 for Silicon BJTs. Do not change unless measuring directly.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">NR <span class="hint">reverse emission coeff</span></label>
-                                <input type="text" class="form-control" id="sp_nr" value="0.99" placeholder="0.99" title="Reverse emission coefficient." />
+                                <input type="text" class="form-control" id="sp_nr" value="0.99" placeholder="0.99" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Reverse Emission Coeff (NR)</b><br>Non-ideality factor for reverse current.<br><i>Practice: Usually ~1.0.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">BR <span class="hint">reverse beta</span></label>
-                                <input type="text" class="form-control" id="sp_br" value="7" placeholder="7" title="Reverse beta – current gain in reverse mode." />
+                                <input type="text" class="form-control" id="sp_br" value="7" placeholder="7" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Reverse Beta (BR)</b><br>Current gain in inverted operation.<br><i>Practice: Usually very low (0.1 to 10). Affects saturation region characteristics.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">TF <span class="hint">(s) forward transit time</span></label>
-                                <input type="text" class="form-control" id="sp_tf" value="6.26e-10" placeholder="6.26e-10" title="Forward transit time: TF ≈ 1/(2π·fT)." />
+                                <input type="text" class="form-control" id="sp_tf" value="6.26e-10" placeholder="6.26e-10" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Forward Transit Time (TF)</b><br>Base charge transit time.<br><i>Practice: Sets fT limit. TF = 1 / (2 * Math.PI * fT). Vital for transient analysis.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">TR <span class="hint">(s) reverse transit time</span></label>
-                                <input type="text" class="form-control" id="sp_tr" value="1.55e-7" placeholder="1.55e-7" title="Reverse transit time ≈ 150 × TF." />
+                                <input type="text" class="form-control" id="sp_tr" value="1.55e-7" placeholder="1.55e-7" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Reverse Transit Time (TR)</b><br>Transit time in saturation.<br><i>Practice: Typically much larger than TF (10x-100x). Dominates storage time in switching.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">CJC <span class="hint">(F) collector-base cap</span></label>
-                                <input type="text" class="form-control" id="sp_cjc" value="3.62e-12" placeholder="3.62e-12" title="Collector-base zero-bias depletion capacitance." />
+                                <input type="text" class="form-control" id="sp_cjc" value="3.62e-12" placeholder="3.62e-12" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>B-C Zero-Bias Cap (CJC)</b><br>Base-Collector depletion capacitance.<br><i>Practice: Derived from Cob. Crucial for AC/RF behavior.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">CJE <span class="hint">(F) base-emitter cap</span></label>
-                                <input type="text" class="form-control" id="sp_cje" value="1.26e-11" placeholder="1.26e-11" title="Base-emitter zero-bias depletion capacitance." />
+                                <input type="text" class="form-control" id="sp_cje" value="1.26e-11" placeholder="1.26e-11" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>B-E Zero-Bias Cap (CJE)</b><br>Base-Emitter depletion capacitance.<br><i>Practice: Derived from Cib. Affects input impedance at high frequencies.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">VJE <span class="hint">(V) BE built-in potential</span></label>
-                                <input type="text" class="form-control" id="sp_vje" value="0.70" placeholder="0.70" title="Base-emitter built-in potential." />
+                                <input type="text" class="form-control" id="sp_vje" value="0.70" placeholder="0.70" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>B-E Built-in Potential (VJE)</b><br>Junction potential for B-E diode.<br><i>Practice: Typically 0.7V to 0.75V for Silicon.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">MJE <span class="hint">BE grading coeff</span></label>
-                                <input type="text" class="form-control" id="sp_mje" value="0.34" placeholder="0.34" title="Base-emitter grading coefficient." />
+                                <input type="text" class="form-control" id="sp_mje" value="0.34" placeholder="0.34" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>B-E Grading Coeff (MJE)</b><br>Defines CJE voltage dependence.<br><i>Practice: Typically 0.33 (graded) to 0.5 (abrupt).</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">EG <span class="hint">(eV) energy gap</span></label>
-                                <input type="text" class="form-control" id="sp_eg" value="1.11" placeholder="1.11" title="Energy gap – 1.11eV for silicon." />
+                                <input type="text" class="form-control" id="sp_eg" value="1.11" placeholder="1.11" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Energy Gap (EG)</b><br>Bandgap energy of material.<br><i>Practice: 1.11eV for Silicon. Change only if using Germanium (0.67) or SiC.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">XTI <span class="hint">temp exponent for IS</span></label>
-                                <input type="text" class="form-control" id="sp_xti" value="7.45" placeholder="7.45" title="Temperature exponent for saturation current." />
+                                <input type="text" class="form-control" id="sp_xti" value="7.45" placeholder="7.45" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>IS Temp Exponent (XTI)</b><br>Temperature dependence of IS.<br><i>Practice: Default 3 for BJTs. Affects thermal stability simulations.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">XTB <span class="hint">temp exponent for BF</span></label>
-                                <input type="text" class="form-control" id="sp_xtb" value="1.38" placeholder="1.38" title="Temperature exponent for beta." />
+                                <input type="text" class="form-control" id="sp_xtb" value="1.38" placeholder="1.38" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>BF Temp Exponent (XTB)</b><br>Temperature dependence of Beta.<br><i>Practice: Values between 1.0 and 2.0. Vital for temperature sweeps.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">RB <span class="hint">(Ω) base resistance</span></label>
-                                <input type="text" class="form-control" id="sp_rb" value="150" placeholder="150" title="Base resistance." />
+                                <input type="text" class="form-control" id="sp_rb" value="150" placeholder="150" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Base Resistance (RB)</b><br>Parasitic resistance of base region.<br><i>Practice: 10 to 200 ohms typical. Affects high-frequency gain and noise.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">RE <span class="hint">(Ω) emitter resistance</span></label>
-                                <input type="text" class="form-control" id="sp_re" value="0.8" placeholder="0.8" title="Emitter resistance." />
+                                <input type="text" class="form-control" id="sp_re" value="0.8" placeholder="0.8" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Emitter Resistance (RE)</b><br>Parasitic resistance of emitter.<br><i>Practice: Usually &lt;1 ohm. Heavily degrades high-current gain.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">RC <span class="hint">(Ω) collector resistance</span></label>
-                                <input type="text" class="form-control" id="sp_rc" value="0.25" placeholder="0.25" title="Collector resistance." />
+                                <input type="text" class="form-control" id="sp_rc" value="0.25" placeholder="0.25" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Collector Resistance (RC)</b><br>Parasitic resistance of collector.<br><i>Practice: Sets VCE(sat) limits. Typically 0.1 to 5 ohms.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">IRB <span class="hint">(A) RB roll-off current</span></label>
-                                <input type="text" class="form-control" id="sp_irb" value="0.0008" placeholder="0.0008" title="Current at which RB begins to fall." />
+                                <input type="text" class="form-control" id="sp_irb" value="0.0008" placeholder="0.0008" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>RB Roll-off Current (IRB)</b><br>Current where RB falls halfway to RBM.<br><i>Practice: Models base conductivity modulation.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">RBM <span class="hint">(Ω) min base resistance</span></label>
-                                <input type="text" class="form-control" id="sp_rbm" value="0.83" placeholder="0.83" title="Minimum base resistance at high current." />
+                                <input type="text" class="form-control" id="sp_rbm" value="0.83" placeholder="0.83" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Min Base Resistance (RBM)</b><br>RB at very high currents.<br><i>Practice: Usually roughly half of RB.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">XTF <span class="hint">TF bias dependence</span></label>
-                                <input type="text" class="form-control" id="sp_xtf" value="25" placeholder="25" title="Coefficient for bias dependence of TF." />
+                                <input type="text" class="form-control" id="sp_xtf" value="25" placeholder="25" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>TF Bias Dependence (XTF)</b><br>Controls fT roll-off with VBC.<br><i>Practice: Fine-tunes high-frequency response.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">VTF <span class="hint">(V) TF bias dependence</span></label>
-                                <input type="text" class="form-control" id="sp_vtf" value="2" placeholder="2" title="Voltage dependence of TF." />
+                                <input type="text" class="form-control" id="sp_vtf" value="2" placeholder="2" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>TF Voltage Dependence (VTF)</b><br>Voltage parameter for TF bias.<br><i>Practice: Usually default values unless modeling precise RF response.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">ITF <span class="hint">(A) TF high-current</span></label>
-                                <input type="text" class="form-control" id="sp_itf" value="0.277" placeholder="0.277" title="High-current dependence of TF." />
+                                <input type="text" class="form-control" id="sp_itf" value="0.277" placeholder="0.277" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>TF Current Dependence (ITF)</b><br>Current parameter for TF bias.<br><i>Practice: Modifies fT roll-off at high currents.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">VJC <span class="hint">(V) BC built-in potential</span></label>
-                                <input type="text" class="form-control" id="sp_vjc" value="0.50" placeholder="0.50" title="Collector-base built-in potential." />
+                                <input type="text" class="form-control" id="sp_vjc" value="0.50" placeholder="0.50" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>B-C Built-in Potential (VJC)</b><br>Junction potential for B-C diode.<br><i>Practice: Typically 0.5V to 0.75V.</i>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">MJC <span class="hint">BC grading coeff</span></label>
-                                <input type="text" class="form-control" id="sp_mjc" value="0.37" placeholder="0.37" title="Collector-base grading coefficient." />
+                                <input type="text" class="form-control" id="sp_mjc" value="0.37" placeholder="0.37" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>B-C Grading Coeff (MJC)</b><br>Defines CJC voltage dependence.<br><i>Practice: Typically 0.33 for graded junctions.</i>" />
                             </div>
                         </div>
                     </div>

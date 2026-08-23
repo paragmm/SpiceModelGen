@@ -38,6 +38,7 @@ $(function () {
         SpiceUI.initParticles();
         SpiceUI.initCollapsibles();
         SpiceUI.initThemeToggle();
+        SpiceUI.initTooltips();
         populatePresetDropdown();
         refreshLibraryDropdown();
         refreshLibCount();
