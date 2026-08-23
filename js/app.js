@@ -46,8 +46,11 @@ $(function () {
             refreshLibCount();
             bindEvents();
 
-            // Load default preset
-            loadPreset('bc847b');
+            // Load a random preset
+            var presetKeys = SpicePresets.keys();
+            var randomKey = presetKeys[Math.floor(Math.random() * presetKeys.length)];
+            $presetSelect.val(randomKey);
+            loadPreset(randomKey);
         });
     }
 
@@ -221,6 +224,40 @@ $(function () {
 
     function autoCalcGummelPoon() {
         var ds = getDatasheetValues();
+        
+        // 1. Validation
+        var requiredFields = {
+            vceo: 'VCEO (Collector-Emitter Voltage)',
+            ic: 'IC (Collector Current)',
+            hfe_min: 'hFE min (Min DC Gain)',
+            hfe_max: 'hFE max (Max DC Gain)',
+            ft: 'fT (Transition Frequency)',
+            vbe: 'VBE(on) (Base-Emitter Turn-On)',
+            vcesat: 'VCE(sat) (Saturation Voltage)',
+            cob: 'Cob (Output Capacitance)'
+        };
+
+        var missing = [];
+        for (var key in requiredFields) {
+            if (!ds[key] || ds[key].trim() === '') {
+                missing.push(requiredFields[key]);
+            } else if (isNaN(parseFloat(ds[key]))) {
+                missing.push(requiredFields[key] + ' (Must be a number)');
+            }
+        }
+
+        if (missing.length > 0) {
+            var $list = $('#validationMissingList');
+            $list.empty();
+            missing.forEach(function(item) {
+                $list.append($('<li>').text(item));
+            });
+            var validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+            validationModal.show();
+            return;
+        }
+
+        // 2. Calculation
         var result = SpiceEngine.autoCalcGummelPoon(ds);
 
         // Populate SPICE fields
@@ -339,6 +376,25 @@ $(function () {
         SpiceUI.showToast('Downloaded ' + name + '.lib', 'success');
     }
 
+    function clearAllFields(skipConfirm) {
+        if (!skipConfirm && !confirm('Clear all fields and start over?')) return;
+
+        $('input[type="text"]').each(function () {
+            if (this.id !== 'modelName' && this.id !== 'librarySearch') {
+                $(this).val('');
+            }
+        });
+        $modelName.val('MY_NPN');
+        $modelType.val('NPN');
+        customParams = [];
+        renderCustomParams();
+        $outputArea.text('/* Fill in the parameters and click Generate */');
+        $paramCount.text('0 params');
+        $displayName.text('MY_NPN');
+        $displayType.text('NPN');
+        SpiceUI.showToast('Cleared all fields.', '');
+    }
+
     // ═══════════════════════════════════════════════════
     //  EVENT BINDINGS
     // ═══════════════════════════════════════════════════
@@ -356,7 +412,11 @@ $(function () {
         });
         $presetSelect.on('change', function() {
             var key = $(this).val();
-            if (key) loadPreset(key);
+            if (key) {
+                loadPreset(key);
+            } else {
+                clearAllFields(true);
+            }
         });
 
         // ─── Library Load ───
@@ -438,22 +498,7 @@ $(function () {
 
         // ─── Clear ───
         $('#clearBtn').on('click', function () {
-            if (!confirm('Clear all fields and start over?')) return;
-
-            $('input[type="text"]').each(function () {
-                if (this.id !== 'modelName' && this.id !== 'librarySearch') {
-                    $(this).val('');
-                }
-            });
-            $modelName.val('MY_NPN');
-            $modelType.val('NPN');
-            customParams = [];
-            renderCustomParams();
-            $outputArea.text('/* Fill in the parameters and click Generate */');
-            $paramCount.text('0 params');
-            $displayName.text('MY_NPN');
-            $displayType.text('NPN');
-            SpiceUI.showToast('Cleared all fields.', '');
+            clearAllFields(false);
         });
 
         // ─── Add Custom Param ───

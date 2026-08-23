@@ -395,10 +395,12 @@
             </div>
 
             <!-- ─── RIGHT COLUMN: Output ─── -->
-            <div class="col-12 col-xl-6 d-flex flex-column gap-3">
+            <div class="col-12 col-xl-6">
+                <!-- Sticky wrapper to prevent overlap between cards in this column -->
+                <div class="d-flex flex-column gap-3" style="position: sticky; top: 20px;">
 
                 <!-- Generated SPICE Model Card -->
-                <div class="card sp-card sp-card-glow output-card-sticky" id="cardOutput" style="position: sticky; top: 20px;">
+                <div class="card sp-card sp-card-glow" id="cardOutput">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <div class="card-title d-flex align-items-center gap-2 mb-0">
                             <i class="fa-solid fa-file-code"></i>
@@ -469,6 +471,8 @@
                         </button>
                     </div>
                 </div>
+                </div>
+                </div> <!-- End sticky wrapper -->
             </div>
         </div>
 
@@ -651,6 +655,26 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation Modal -->
+    <div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-bg-dark border-danger">
+                <div class="modal-header border-danger">
+                    <h5 class="modal-title text-danger" id="validationModalLabel"><i class="fa-solid fa-triangle-exclamation"></i> Missing Required Fields</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Cannot generate the model because the following datasheet fields are blank or invalid:</p>
+                    <ul id="validationMissingList" class="text-warning"></ul>
+                    <p class="mb-0"><small>Please enter typical values for these fields.</small></p>
+                </div>
+                <div class="modal-footer border-danger">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
