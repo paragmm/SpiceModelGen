@@ -351,6 +351,10 @@ $(function () {
             }
             loadPreset(key);
         });
+        $presetSelect.on('change', function() {
+            var key = $(this).val();
+            if (key) loadPreset(key);
+        });
 
         // ─── Library Load ───
         $('#loadLibraryBtn').on('click', function () {
@@ -360,6 +364,10 @@ $(function () {
                 return;
             }
             loadFromLibrary(name);
+        });
+        $librarySelect.on('change', function() {
+            var name = $(this).val();
+            if (name) loadFromLibrary(name);
         });
 
         // ─── Library Delete (from toolbar) ───

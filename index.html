@@ -145,6 +145,9 @@
                             <i class="fa-solid fa-chart-bar"></i>
                             Datasheet Values
                             <span class="badge rounded-pill badge-info-custom">from the PDF</span>
+                            <button class="btn btn-sm btn-outline-info ms-2" data-bs-toggle="modal" data-bs-target="#datasheetHelpModal" style="padding: 2px 6px; font-size: 0.75rem;">
+                                <i class="fa-solid fa-circle-question"></i> Help Guide
+                            </button>
                         </div>
                         <button class="collapse-btn" data-target="datasheetBody">
                             <i class="fa-solid fa-chevron-up"></i>
@@ -160,7 +163,7 @@
                             <div class="col-sm-6">
                                 <label class="form-label">V<sub>CEO</sub> <span class="hint">(V)</span></label>
                                 <input type="text" class="form-control" id="ds_vceo" value="45" placeholder="e.g. 45"
-                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Collector-Emitter Voltage (VCEO)</b><br>Max voltage before breakdown. Purpose: Defines voltage rating.<br><i>Practice: Set 10-20% higher than max expected operating voltage.</i>" />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Collector-Emitter Voltage (VCEO)</b><br>Max voltage before breakdown. Purpose: Defines voltage rating.<br><i>Practice: Set 10-20% higher than max expected operating voltage.</i><br><span class='text-warning'><b>Range Guide:</b> If the datasheet shows a range, use the absolute maximum rated value for your specific part grade.</span>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">I<sub>C</sub> <span class="hint">(mA)</span></label>
@@ -185,12 +188,12 @@
                             <div class="col-sm-6">
                                 <label class="form-label">V<sub>BE(on)</sub> <span class="hint">(mV)</span></label>
                                 <input type="text" class="form-control" id="ds_vbe" value="650" placeholder="e.g. 650"
-                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Base-Emitter Turn-On (VBE on)</b><br>Typical forward voltage drop. Purpose: Sets IS and VJE.<br><i>Practice: Usually 650-700mV for Silicon. Check specific operating point in datasheet.</i>" />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Base-Emitter Turn-On (VBE on)</b><br>Typical forward voltage drop. Purpose: Sets IS and VJE.<br><i>Practice: Usually 650-700mV for Silicon. Check specific operating point in datasheet.</i><br><span class='text-warning'><b>Range Guide:</b> If given a range (e.g. 1000 - 1500mV), use the <b>typical</b> value (e.g. 1000mV). If no typical is listed, taking the average is a safe bet.</span>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">V<sub>CE(sat)</sub> <span class="hint">(mV)</span></label>
                                 <input type="text" class="form-control" id="ds_vcesat" value="250" placeholder="e.g. 250"
-                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Saturation Voltage (VCE sat)</b><br>Voltage drop when fully ON. Purpose: Sets RC (collector resistance).<br><i>Practice: Important for switching applications to calculate power dissipation.</i>" />
+                                       data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="<b>Saturation Voltage (VCE sat)</b><br>Voltage drop when fully ON. Purpose: Sets RC (collector resistance).<br><i>Practice: Important for switching applications to calculate power dissipation.</i><br><span class='text-warning'><b>Range Guide:</b> If given a range (e.g. 400 - 3000mV), use the <b>typical</b> operating point (e.g. 400mV) unless modeling worst-case thermal limits.</span>" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">C<sub>ob</sub> <span class="hint">(pF)</span></label>
@@ -512,6 +515,141 @@
                             <p>No models saved yet.</p>
                             <span>Generate a model and click "Save to Library" to get started.</span>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Guide Modal -->
+    <div class="modal fade" id="datasheetHelpModal" tabindex="-1" aria-labelledby="datasheetHelpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content" style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title d-flex align-items-center gap-2" id="datasheetHelpModalLabel">
+                        <i class="fa-solid fa-book-open-reader text-info"></i> How to Read a Datasheet
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(var(--btn-close-invert));"></button>
+                </div>
+                <div class="modal-body p-4 pt-2">
+                    <p class="text-muted">Extracting parameters from a BJT datasheet can be tricky. Here is a guide on where to look for each value in standard NPN/PNP datasheets.</p>
+
+                    <h5 class="mt-4 text-primary"><i class="fa-solid fa-id-card"></i> Model Identity</h5>
+                    <table class="table table-dark table-striped mt-3" style="--bs-table-bg: transparent; --bs-table-color: var(--text-color);">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Meaning &amp; Purpose</th>
+                                <th>Where to find it</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Model Name</strong></td>
+                                <td>The name of your SPICE model (e.g. BC847B). Used in the <code>.model</code> statement.</td>
+                                <td>The title or part number on the front page.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Type</strong></td>
+                                <td>Polarity: NPN or PNP.</td>
+                                <td>Top description (e.g. "NPN General Purpose Amplifier").</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5 class="mt-4 text-primary"><i class="fa-solid fa-chart-bar"></i> Datasheet Values</h5>
+                    <table class="table table-dark table-striped mt-3" style="--bs-table-bg: transparent; --bs-table-color: var(--text-color);">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Meaning</th>
+                                <th>Datasheet Section</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>V<sub>CEO</sub></strong></td>
+                                <td>Collector-Emitter Breakdown Voltage</td>
+                                <td><em>Absolute Maximum Ratings</em> table. Look for V<sub>CEO</sub>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>I<sub>C</sub></strong></td>
+                                <td>Continuous Collector Current</td>
+                                <td><em>Absolute Maximum Ratings</em> table. Look for I<sub>C</sub>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>h<sub>FE</sub> (min / max)</strong></td>
+                                <td>DC Current Gain</td>
+                                <td><em>Electrical Characteristics -&gt; On Characteristics</em>. Read at the typical operating I<sub>C</sub> (e.g. 2mA).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>f<sub>T</sub></strong></td>
+                                <td>Transition Frequency / Current-Gain Bandwidth</td>
+                                <td><em>Electrical Characteristics -&gt; Small-Signal Characteristics</em>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>V<sub>BE(on)</sub></strong></td>
+                                <td>Base-Emitter Turn-on Voltage</td>
+                                <td><em>On Characteristics</em>. Often given as a max value, typical is ~650-700mV.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>V<sub>CE(sat)</sub></strong></td>
+                                <td>Collector-Emitter Saturation Voltage</td>
+                                <td><em>On Characteristics</em>. Important for switching applications.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>C<sub>ob</sub> / C<sub>ib</sub></strong></td>
+                                <td>Output / Input Capacitance</td>
+                                <td><em>Small-Signal Characteristics</em>. Often measured at specific voltages like V<sub>CB</sub>=10V.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>I<sub>CBO</sub></strong></td>
+                                <td>Collector Cut-off Current</td>
+                                <td><em>Off Characteristics</em>. Leakage current.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5 class="mt-4 text-primary"><i class="fa-solid fa-gears"></i> SPICE Gummel-Poon Parameters</h5>
+                    <p class="text-muted mb-2"><small>These are the core underlying SPICE parameters that the engine calculates. You can manually tweak them before saving.</small></p>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped mt-3" style="--bs-table-bg: transparent; --bs-table-color: var(--text-color);">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Meaning</th>
+                                    <th>Good Practice / Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>BF</strong></td><td>Forward Beta</td><td>Derived from typical hFE. Core parameter for DC analysis.</td></tr>
+                                <tr><td><strong>IS</strong></td><td>Transport Saturation Current</td><td>Usually 1e-15 to 1e-12 A. Affects VBE drop.</td></tr>
+                                <tr><td><strong>VAF</strong></td><td>Forward Early Voltage</td><td>Lower values (20-50V) mean steeper IC curve slope in active region.</td></tr>
+                                <tr><td><strong>IKF</strong></td><td>High-Current Roll-off</td><td>Derived from datasheet hFE vs IC curve. Critical for high-current accuracy.</td></tr>
+                                <tr><td><strong>NF</strong></td><td>Forward Emission Coeff</td><td>Almost always ~1.0 for Silicon BJTs.</td></tr>
+                                <tr><td><strong>NR</strong></td><td>Reverse Emission Coeff</td><td>Usually ~1.0.</td></tr>
+                                <tr><td><strong>BR</strong></td><td>Reverse Beta</td><td>Usually very low (0.1 to 10). Affects saturation region characteristics.</td></tr>
+                                <tr><td><strong>TF</strong></td><td>Forward Transit Time</td><td>Sets fT limit. TF = 1 / (2 * π * fT). Vital for transient analysis.</td></tr>
+                                <tr><td><strong>TR</strong></td><td>Reverse Transit Time</td><td>Typically much larger than TF (10x-100x). Dominates storage time in switching.</td></tr>
+                                <tr><td><strong>CJC</strong></td><td>B-C Zero-Bias Cap</td><td>Derived from Cob. Crucial for AC/RF behavior.</td></tr>
+                                <tr><td><strong>CJE</strong></td><td>B-E Zero-Bias Cap</td><td>Derived from Cib. Affects input impedance at high frequencies.</td></tr>
+                                <tr><td><strong>VJE</strong></td><td>B-E Built-in Potential</td><td>Typically 0.7V to 0.75V for Silicon.</td></tr>
+                                <tr><td><strong>MJE</strong></td><td>B-E Grading Coeff</td><td>Typically 0.33 (graded) to 0.5 (abrupt).</td></tr>
+                                <tr><td><strong>EG</strong></td><td>Energy Gap</td><td>1.11eV for Silicon. Change only if using Germanium (0.67).</td></tr>
+                                <tr><td><strong>XTI</strong></td><td>IS Temp Exponent</td><td>Default 3 for BJTs. Affects thermal stability simulations.</td></tr>
+                                <tr><td><strong>XTB</strong></td><td>BF Temp Exponent</td><td>Values between 1.0 and 2.0. Vital for temperature sweeps.</td></tr>
+                                <tr><td><strong>RB</strong></td><td>Base Resistance</td><td>10 to 200 ohms typical. Affects high-frequency gain and noise.</td></tr>
+                                <tr><td><strong>RE</strong></td><td>Emitter Resistance</td><td>Usually &lt;1 ohm. Heavily degrades high-current gain.</td></tr>
+                                <tr><td><strong>RC</strong></td><td>Collector Resistance</td><td>Sets VCE(sat) limits. Typically 0.1 to 5 ohms.</td></tr>
+                                <tr><td><strong>IRB</strong></td><td>RB Roll-off Current</td><td>Current where RB falls halfway to RBM. Models base conductivity modulation.</td></tr>
+                                <tr><td><strong>RBM</strong></td><td>Min Base Resistance</td><td>RB at very high currents. Usually roughly half of RB.</td></tr>
+                                <tr><td><strong>XTF</strong></td><td>TF Bias Dependence</td><td>Controls fT roll-off with VBC. Fine-tunes high-frequency response.</td></tr>
+                                <tr><td><strong>VTF</strong></td><td>TF Voltage Dependence</td><td>Voltage parameter for TF bias.</td></tr>
+                                <tr><td><strong>ITF</strong></td><td>TF Current Dependence</td><td>Current parameter for TF bias. Modifies fT roll-off at high currents.</td></tr>
+                                <tr><td><strong>VJC</strong></td><td>B-C Built-in Potential</td><td>Typically 0.5V to 0.75V.</td></tr>
+                                <tr><td><strong>MJC</strong></td><td>B-C Grading Coeff</td><td>Typically 0.33 for graded junctions.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

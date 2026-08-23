@@ -147,6 +147,29 @@ var SpicePresets = (function () {
                 { name: 'XCJC', value: '0.5' },
                 { name: 'FC', value: '0.5' }
             ]
+        },
+
+        '2sc5200': {
+            name: '2SC5200',
+            type: 'NPN',
+            ds: {
+                vceo: '230', ic: '15000', hfe_min: '80', hfe_max: '160',
+                ft: '30', vbe: '1000', vcesat: '400', cob: '200',
+                cib: '800', icbo: '5000', package: 'TO-264', marking: 'C5200O'
+            },
+            sp: {
+                bf: '120', is: '3.2e-11', vaf: '230', ikf: '10.0',
+                nf: '1.0', nr: '1.0', br: '2.5', tf: '5.3e-9',
+                tr: '5.0e-7', cjc: '2.0e-10', cje: '8.0e-10',
+                vje: '0.65', mje: '0.33', eg: '1.11', xti: '3',
+                xtb: '1.5', rb: '1.5', re: '0.02', rc: '0.02',
+                irb: '0.1', rbm: '0.1', xtf: '10', vtf: '3',
+                itf: '10.0', vjc: '0.50', mjc: '0.33'
+            },
+            custom: [
+                { name: 'XCJC', value: '0.5' },
+                { name: 'FC', value: '0.5' }
+            ]
         }
     };
 
